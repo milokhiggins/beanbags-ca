@@ -1,0 +1,9 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="beanbags-ca:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/beanbags_ca_jar</output-path>
+    <root id="archive" name="beanbags-ca.jar">
+      <element id="module-output" name="beanbags-ca" />
+      <element id="module-source" name="beanbags-ca" />
+    </root>
+  </artifact>
+</component>
