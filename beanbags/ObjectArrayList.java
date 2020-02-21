@@ -72,8 +72,8 @@ public class ObjectArrayList implements Serializable
      * if it is successful. It will return <code>false</code> if <code>o</code> is not contained 
      * in the list and therefore not removed
      * 
-     * @param index index of element in list to be returned
-     * @return Object at corresponding index 
+     * @param o object to remove
+     * @return Whether the object was contained in the list
      * 
      */
     public boolean remove(Object o) {
