@@ -1,0 +1,63 @@
+
+DO NOT use anything from java.util. only java.lang and java.io.
+NO other imports.
+
+
+bean bag class
+
+attributes
+	-manufacturer
+	-name
+	-price
+	-ID (eight char string - positive hex number)
+	-year of manufacture
+	-month of manufacture
+	-(optional) text: additional information
+constraint:
+	-matching ID means (assertion) name, manufacturer and text component must match
+	-check the above (prevent data entry errors)
+	-bean bags with matching ID are theoretically identical (from a stock point of view)
+
+features
+	-reservations:
+		-reservation number
+		-customer keeps reservation number, uses that to buy it later
+		-only for bean bags IN STOCK
+		-cancel reservation
+
+design:
+	-ObjectArrayList of beanbags and of reservations
+	-count (keep track) of number of bean bags sold, and the total price
+	-serialise into file
+
+
+condensed methods:
+	-addBeanBags
+	-empty
+	-reset sale and cost tracking
+	-replace
+	-sell bean bags
+	-set bean bag price
+	-reservations:
+		-reserve bean bags	
+		-unreserve bean bags
+getters
+	-get bean bag details
+	-get number of different bean bags in stock
+	-get number of sold bean bags
+
+running counters
+	-get total price of sold bean bags
+	-number of sold bean bags
+
+static counters
+	-bean bags in stock
+	-reserved bean bags in stock
+	-get total price of reserved bean bags
+
+serialisation
+	-load store contents
+	-save store contents
+
+
+
