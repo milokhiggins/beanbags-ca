@@ -1,7 +1,6 @@
 package beanbags;
 import java.io.IOException;
 
-
 /**
  * Store implements the BeanBagStore interface.
  * 
