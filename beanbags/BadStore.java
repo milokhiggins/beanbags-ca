@@ -3,7 +3,7 @@ import java.io.IOException;
 
 
 /**
- * BadStore is a minimally compiling, but non-functioning implementor of the
+ * hi BadStore is a minimally compiling, but non-functioning implementor of the
  * BeanBagStore interface.
  * 
  * @author Jonathan Fieldsend 
