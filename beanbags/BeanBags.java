@@ -3,7 +3,7 @@ package beanbags;
 /**
  * BeanBags ...
  *
- * @author SN690024245, SN
+ * @author SN690024245, SN680046138
  * @version 1.0
  */
 public class BeanBags {
