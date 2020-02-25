@@ -9,7 +9,7 @@ import beanbags.BeanBagStore;
  * instance when checking the performance of the package as
  * your pair develops it
  *
- * @author Jonathan Fieldsend
+ * @author Jonathan Fieldsend && SN690024245, SN680046138
  * @version 1.0
  */
 public class JarProcessTestApp {
