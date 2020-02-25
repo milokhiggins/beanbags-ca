@@ -1,4 +1,4 @@
-import beanbags.BadStore;
+import beanbags.Store;
 import beanbags.BeanBagStore;
 /**
  * Please follow instructions in the ECM1410_CA_jar_walkthrough
@@ -14,9 +14,9 @@ import beanbags.BeanBagStore;
  */
 public class JarProcessTestApp {
 	public static void main(String[] args) {
-		BeanBagStore badStore = new BadStore();
+		BeanBagStore store = new Store();
 		System.out.println("BadStore instance successfully made, with "
-                           + badStore.beanBagsInStock()
+                           + store.beanBagsInStock()
                            + " beanbags in stock.");
 	}
 }
