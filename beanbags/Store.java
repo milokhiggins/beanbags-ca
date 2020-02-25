@@ -4,7 +4,7 @@ import java.io.IOException;
 /**
  * Store implements the BeanBagStore interface.
  * 
- * @author SN690024245 & SN6-------- 
+ * @author SN690024245 & SN680046138
  * @version 1.0
  */
 public class Store implements BeanBagStore
