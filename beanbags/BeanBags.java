@@ -15,6 +15,7 @@ public class BeanBags {
     private String additionalText;
     private int quantity;
     private int quantityUnreserved;
+    private int price;
 
     /**
      *
@@ -27,8 +28,8 @@ public class BeanBags {
      */
     public BeanBags (String id, String name, String manufacturer, short yearManufactured,
                      byte monthManufactured, int quantity) throws IllegalIDException,
-                     InvalidMonthException{ this(id, name, manufacturer, yearManufactured,
-                     monthManufactured, quantity, "");
+                     InvalidMonthException, IllegalNumberOfBeanBagsAddedException {
+        this(id, name, manufacturer, yearManufactured, monthManufactured, quantity, "");
     }
 
     /**
@@ -41,11 +42,11 @@ public class BeanBags {
      * @param quantity          number of bean bags
      */
     public BeanBags(String id, String name, String manufacturer, short yearManufactured,
-                    byte monthManufactured, int quantity, String additionalText)throws
+                    byte monthManufactured, int quantity, String additionalText) throws
                     IllegalIDException, InvalidMonthException, IllegalNumberOfBeanBagsAddedException
                     {
 
-        checkId(id);
+        BeanBags.checkId(id);
         if (quantity<=0){
             throw new IllegalNumberOfBeanBagsAddedException("Must add at least one beanbag");
         }
@@ -114,6 +115,10 @@ public class BeanBags {
         }
     }
 
+    public void setPrice(int price) throws InvalidPriceException {
+
+    }
+
     /**
      * Reserve bean bags.
      * @param num Number to reserve.
@@ -142,6 +147,7 @@ public class BeanBags {
         details.add((Object) name);
         details.add((Object) manufacturer);
         details.add((Object) additionalText);
+
         return details;
     }
 
@@ -153,7 +159,7 @@ public class BeanBags {
         additionalText = text;
     }
 
-    private void checkId(String id) throws IllegalIDException{
+    private static void checkId(String id) throws IllegalIDException{
         //  checks if the string is positive,
         int hexadecimalNumber;
         //  checks if the string is a hexadecimal number.
