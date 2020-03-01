@@ -43,18 +43,18 @@ public class Store implements BeanBagStore, java.io.Serializable
         int indexOfMatch = this.getBeanBagsById(id);
         if (indexOfMatch == -1) {
             //if bean bag does not exist, create new bean bag object
-            BeanBags newBeanBags = new BeanBags(id, name, manufacturer, year,
+            BeanBagsStock newBeanBagsStock = new BeanBagsStock(id, name, manufacturer, year,
                                               month, num, information);
-            this.beanbags.add((Object)newBeanBags);
+            this.beanbags.add((Object)newBeanBagsStock);
         } else {
             //if bean bag does exist, increase quantity
-            BeanBags existingBeanBags = (BeanBags)this.beanbags.get(indexOfMatch);
+            BeanBagsStock existingBeanBagsStock = (BeanBagsStock)this.beanbags.get(indexOfMatch);
             //check that details match with the same bean bag ID
-            boolean detailsMatch = existingBeanBags.checkDetailsMatch(name, manufacturer,
+            boolean detailsMatch = existingBeanBagsStock.checkDetailsMatch(name, manufacturer,
                                                                       information);
             if (detailsMatch) {
-                existingBeanBags.increaseQuantity(num);
-                existingBeanBags.addDate(month, year);
+                existingBeanBagsStock.increaseQuantity(num);
+                existingBeanBagsStock.addDate(month, year);
             } else {
                 throw new BeanBagMismatchException("The ID entered does not match the details of " +
                         "the bean bag");
@@ -74,8 +74,8 @@ public class Store implements BeanBagStore, java.io.Serializable
         if (beanBagIndex == -1) {
             throw new BeanBagIDNotRecognisedException("Bean bag ID " + id + " is not recognised.");
         } else {
-            BeanBags beanBags = (BeanBags) this.beanbags.get(beanBagIndex);
-            if (beanBags.getQuantityReserved() > 0) {
+            BeanBagsStock beanBagsStock = (BeanBagsStock) this.beanbags.get(beanBagIndex);
+            if (beanBagsStock.getQuantityReserved() > 0) {
                 ObjectArrayList reservations = this.getReservationsByBeanBagId(id);
                 for (int i = 0; i < reservations.size(); i++) {
                     BeanBagReservation reservation = (BeanBagReservation) reservations.get(i);
@@ -86,7 +86,7 @@ public class Store implements BeanBagStore, java.io.Serializable
                     }
                 }
             }
-            beanBags.setPrice(priceInPence);
+            beanBagsStock.setPrice(priceInPence);
         }
     }
 
@@ -102,13 +102,18 @@ public class Store implements BeanBagStore, java.io.Serializable
                 throw new BeanBagIDNotRecognisedException("Bean bag ID "+id+" is not recognised");
             }
         } else {
-            BeanBags beanbag = (BeanBags)beanbags.get(indexOfMatch);
+            BeanBagsStock beanbag = (BeanBagsStock)beanbags.get(indexOfMatch);
             int numberUnreserved = beanbag.getQuantityUnreserved();
             if (numberUnreserved < num) {
                 throw new InsufficientStockException("Not enough unreserved stock.");
             } else {
                 beanbag.decreaseQuantity(num);
-                BeanBags beanBagSale = new BeanBags()
+                ObjectArrayList details = beanbag.getDetails();
+                String name = (String)details.get(0);
+                String manufacturer = (String)details.get(1);
+                BeanBags beanBagSold = new BeanBags(id,name,manufacturer,num);
+                numberBeanBagsSold += num;
+                totalPriceSoldBeanBags += (num * beanbag.getPrice());
             }
         }
     }
@@ -233,7 +238,7 @@ public class Store implements BeanBagStore, java.io.Serializable
      */
     private int getBeanBagsById (String id) {
         for (int i = 0; i < beanbags.size(); i++) {
-            BeanBags beanbag = (BeanBags)beanbags.get(i);
+            BeanBagsStock beanbag = (BeanBagsStock)beanbags.get(i);
             if (beanbag.getId().equals(id)) {
                 return i;
             }
