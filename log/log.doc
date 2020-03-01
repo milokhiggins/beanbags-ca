@@ -16,3 +16,8 @@ Created add beanbags sets been bad price and sell beanbag methods in store class
 
 Date: 27/02/20, Time 16:30, duration: 1hrs, typer: Sarah, reviewer: Milo 
 started to explore testing the classes using the test app.
+
+Date: 01/03/2020, Time 15:25, duration: 3hrs, typer: Milo, reviewer: Sarah
+finished sell bean bags method in store (flow chart). 
+Changed program design to use inheritance for beanbag classes to accommodate for sold bean bags list.
+Implemented getbeanbagsbyID method.
