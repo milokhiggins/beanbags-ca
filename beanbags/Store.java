@@ -42,17 +42,22 @@ public class Store implements BeanBagStore, java.io.Serializable
     IllegalIDException, InvalidMonthException {
         int indexOfMatch = this.getBeanBagsById(id);
         if (indexOfMatch == -1) {
+            //if bean bag does not exist, create new bean bag object
             BeanBags newBeanBags = new BeanBags(id, name, manufacturer, year,
                                               month, num, information);
             this.beanbags.add((Object)newBeanBags);
         } else {
+            //if bean bag does exist, increase quantity
             BeanBags existingBeanBags = (BeanBags)this.beanbags.get(indexOfMatch);
-            ObjectArrayList existingBeanBagDetails = existingBeanBags.getDetails();
-            if (((String) existingBeanBagDetails.get(0)).equals(name) &&
-                ((String) existingBeanBagDetails.get(1)).equals(manufacturer) &&
-                ((String) existingBeanBagDetails.get(2)).equals(information)) {
-                //do we check for month and year of manufacturer to be the same?
-                //because this may mean we need to store multiple dates
+            //check that details match with the same bean bag ID
+            boolean detailsMatch = existingBeanBags.checkDetailsMatch(name, manufacturer,
+                                                                      information);
+            if (detailsMatch) {
+                existingBeanBags.increaseQuantity(num);
+                existingBeanBags.addDate(month, year);
+            } else {
+                throw new BeanBagMismatchException("The ID entered does not match the details of " +
+                        "the bean bag");
             }
         }
     }
@@ -65,6 +70,7 @@ public class Store implements BeanBagStore, java.io.Serializable
         //check that ID is valid, throw exception if not
         checkId(id);
         int beanBagIndex = this.getBeanBagsById(id);
+        //check that the bean bag exists in stock
         if (beanBagIndex == -1) {
             throw new BeanBagIDNotRecognisedException("Bean bag ID " + id + " is not recognised.");
         } else {
@@ -73,6 +79,7 @@ public class Store implements BeanBagStore, java.io.Serializable
                 ObjectArrayList reservations = this.getReservationsByBeanBagId(id);
                 for (int i = 0; i < reservations.size(); i++) {
                     BeanBagReservation reservation = (BeanBagReservation) reservations.get(i);
+                    //update lowest price if the new price is lower
                     int lowPrice = reservation.getLowestPrice();
                     if (priceInPence < lowPrice) {
                         reservation.setLowestPrice(priceInPence);
@@ -86,7 +93,24 @@ public class Store implements BeanBagStore, java.io.Serializable
     public void sellBeanBags(int num, String id) throws BeanBagNotInStockException,
     InsufficientStockException, IllegalNumberOfBeanBagsSoldException,
     PriceNotSetException, BeanBagIDNotRecognisedException, IllegalIDException {
-
+        checkId(id);
+        int indexOfMatch = this.getBeanBagsById(id);
+        if (indexOfMatch == -1) {
+            if (checkBeanBagSold(id)) {
+                throw new BeanBagNotInStockException("Bean bag ID "+id+" is no longer in stock.");
+            } else {
+                throw new BeanBagIDNotRecognisedException("Bean bag ID "+id+" is not recognised");
+            }
+        } else {
+            BeanBags beanbag = (BeanBags)beanbags.get(indexOfMatch);
+            int numberUnreserved = beanbag.getQuantityUnreserved();
+            if (numberUnreserved < num) {
+                throw new InsufficientStockException("Not enough unreserved stock.");
+            } else {
+                beanbag.decreaseQuantity(num);
+                BeanBags beanBagSale = new BeanBags()
+            }
+        }
     }
 
     public int reserveBeanBags(int num, String id) throws BeanBagNotInStockException,
@@ -202,10 +226,35 @@ public class Store implements BeanBagStore, java.io.Serializable
         }
     }
 
+    /**
+     * Get the index of the bean bag if it is in stock, otherwise returns -1
+     * @param id id of bean bag
+     * @return index of bean bag, or -1 if no matching bean bag.
+     */
     private int getBeanBagsById (String id) {
-        return 0;
+        for (int i = 0; i < beanbags.size(); i++) {
+            BeanBags beanbag = (BeanBags)beanbags.get(i);
+            if (beanbag.getId().equals(id)) {
+                return i;
+            }
+        }
+        return -1;
     }
 
+    /**
+     *
+     * @param id id of bean bag
+     * @return true if bean bag id has been sold before, false otherwise.
+     */
+    private boolean checkBeanBagSold (String id) {
+        for (int i = 0; i < soldBeanBags.size(); i++) {
+            BeanBags beanbag = (BeanBags)soldBeanBags.get(i);
+            if (beanbag.getId().equals(id)) {
+                return true;
+            }
+        }
+        return false;
+    }
     private ObjectArrayList getReservationsByBeanBagId (String id) {
         return new ObjectArrayList();//fix me later
     }

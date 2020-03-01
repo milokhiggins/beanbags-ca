@@ -1,5 +1,6 @@
 import beanbags.Store;
 import beanbags.BeanBagStore;
+import beanbags.ObjectArrayList;
 /**
  * Please follow instructions in the ECM1410_CA_jar_walkthrough
  * document in conjunction with this small application to
