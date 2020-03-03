@@ -1,4 +1,5 @@
 import beanbags.Store;
+import beanbags.*;
 import beanbags.BeanBagStore;
 import beanbags.ObjectArrayList;
 /**
@@ -14,10 +15,21 @@ import beanbags.ObjectArrayList;
  * @version 1.0
  */
 public class JarProcessTestApp {
-	public static void main(String[] args) {
-		BeanBagStore store = new Store();
+	public static void main(String[] args) throws BeanBagIDNotRecognisedException, IllegalNumberOfBeanBagsAddedException,
+			BeanBagMismatchException, BeanBagNotInStockException, IllegalIDException, IllegalNumberOfBeanBagsAddedException,
+			IllegalNumberOfBeanBagsReservedException, IllegalNumberOfBeanBagsSoldException, InsufficientStockException, InvalidMonthException,
+			InvalidPriceException, PriceNotSetException, ReservationNumberNotRecognisedException{
+		Store store = new Store();
+
+		store.addBeanBags(5 , "manufacturer", "Sarah'sBean", "128AB346"
+				, (short)1994, (byte)1,"hello!");
+
 		System.out.println("BadStore instance successfully made, with "
                            + store.beanBagsInStock()
                            + " beanbags in stock.");
+
+
+
+
 	}
 }

@@ -29,6 +29,7 @@ public class Store implements BeanBagStore, java.io.Serializable
      * @throws IllegalIDException
      * @throws InvalidMonthException
      */
+
     public void addBeanBags(int num, String manufacturer, String name, 
     String id, short year, byte month)
     throws IllegalNumberOfBeanBagsAddedException, BeanBagMismatchException,
@@ -260,7 +261,23 @@ public class Store implements BeanBagStore, java.io.Serializable
         }
         return false;
     }
+
+    /**
+     * Iterates through bean bag reservations and returns a list of the beanbag reservations for
+     * an id.
+     * @param id id of bean bag
+     * @return list of bean bag reservation objects
+     */
     private ObjectArrayList getReservationsByBeanBagId (String id) {
-        return new ObjectArrayList();//fix me later
+        ObjectArrayList matchingReservations = new ObjectArrayList();
+        // iterates through all reservations in reservations list.
+        for (int i = 0; i < reservations.size(); i++) {
+            BeanBagReservation beanbag = (BeanBagReservation) reservations.get(i);
+            // checks if id of selected bean bag matches wanted id.
+            if (beanbag.getId().equals(id)) {
+                matchingReservations.add(beanbag);
+            }
+            }
+        return matchingReservations;
     }
 }
