@@ -25,3 +25,6 @@ Implemented getbeanbagsbyID method.
 Date: 03/03/2020, Time 16:20, duration 1hr 30min, typer: Sarah, reviewer: Milo
 implemented beanbag reversation class and also implemented getReserverationsById method and began work to start testing
 the store class
+
+Date: 06/03/2020, Time 15:10, duration 2hr 20min, tyer: Milo, reviewer:Sarah
+did some testing. Implement a range of mehtods including the reserve and unreserve methods in the store.
