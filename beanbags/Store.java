@@ -11,6 +11,7 @@ public class Store implements BeanBagStore, java.io.Serializable
 {
     private ObjectArrayList beanbags = new ObjectArrayList();
     private ObjectArrayList reservations = new ObjectArrayList();
+    private int beanBagTotal = 0;
     private int beanBagReservedTotal = 0;
     private ObjectArrayList soldBeanBags = new ObjectArrayList();
     private int numberBeanBagsSold = 0;
@@ -47,6 +48,7 @@ public class Store implements BeanBagStore, java.io.Serializable
             BeanBagsStock newBeanBagsStock = new BeanBagsStock(id, name, manufacturer, year,
                                               month, num, information);
             this.beanbags.add((Object)newBeanBagsStock);
+            beanBagTotal += num;
         } else {
             //if bean bag does exist, increase quantity
             BeanBagsStock existingBeanBagsStock = (BeanBagsStock)this.beanbags.get(indexOfMatch);
@@ -56,6 +58,7 @@ public class Store implements BeanBagStore, java.io.Serializable
             if (detailsMatch) {
                 existingBeanBagsStock.increaseQuantity(num);
                 existingBeanBagsStock.addDate(month, year);
+                beanBagTotal += num;
             } else {
                 throw new BeanBagMismatchException("The ID entered does not match the details of " +
                         "the bean bag");
@@ -105,29 +108,78 @@ public class Store implements BeanBagStore, java.io.Serializable
         } else {
             BeanBagsStock beanbag = (BeanBagsStock)beanbags.get(indexOfMatch);
             int numberUnreserved = beanbag.getQuantityUnreserved();
-            if (numberUnreserved < num) {
+            if (num < 1) {
+                throw new IllegalNumberOfBeanBagsSoldException("Cannot sell less than 1 bean bag");
+            } else if (numberUnreserved < num) {
                 throw new InsufficientStockException("Not enough unreserved stock.");
             } else {
                 beanbag.decreaseQuantity(num);
-                ObjectArrayList details = beanbag.getDetails();
-                String name = (String)details.get(0);
-                String manufacturer = (String)details.get(1);
-                BeanBags beanBagSold = new BeanBags(id,name,manufacturer,num);
+                int price = beanbag.getPrice();
+                Object[] beanBagSold = {id, num, price};
+                soldBeanBags.add(beanBagSold);
                 numberBeanBagsSold += num;
+                beanBagTotal -= num;
                 totalPriceSoldBeanBags += (num * beanbag.getPrice());
             }
         }
     }
 
+    /**
+     * Reserve bean bags and return the reservation number
+     * @param num           number of bean bags to be reserved
+     * @param id            ID of bean bags to be reserved
+     * @return Reservation number
+     * @throws BeanBagNotInStockException
+     * @throws InsufficientStockException
+     * @throws IllegalNumberOfBeanBagsReservedException
+     * @throws PriceNotSetException
+     * @throws BeanBagIDNotRecognisedException
+     * @throws IllegalIDException
+     */
     public int reserveBeanBags(int num, String id) throws BeanBagNotInStockException,
     InsufficientStockException, IllegalNumberOfBeanBagsReservedException,
     PriceNotSetException, BeanBagIDNotRecognisedException, IllegalIDException {
-        return 0;
+        checkId(id);
+        int indexOfMatch = this.getBeanBagsById(id);
+        if (indexOfMatch == -1) {
+            if (checkBeanBagSold(id)) {
+                throw new BeanBagNotInStockException("Bean bag ID "+id+" is no longer in stock.");
+            } else {
+                throw new BeanBagIDNotRecognisedException("Bean bag ID "+id+" is not recognised");
+            }
+        } else {
+            BeanBagsStock beanbag = (BeanBagsStock) beanbags.get(indexOfMatch);
+            int numberUnreserved = beanbag.getQuantityUnreserved();
+            if (num < 1) {
+                throw new IllegalNumberOfBeanBagsReservedException("Cannot sell less than 1 bean " +
+                        "bag");
+            } else if (numberUnreserved < num) {
+                throw new InsufficientStockException("Not enough unreserved stock.");
+            } else {
+                beanbag.reserve(num);
+                BeanBagReservation reservation = new BeanBagReservation(id, num,
+                        beanbag.getPrice());
+                reservations.add(reservation);
+                beanBagReservedTotal += num;
+                return reservation.getReservationNumber();
+            }
+        }
     }
 
     public void unreserveBeanBags(int reservationNumber)
     throws ReservationNumberNotRecognisedException {
-
+        int indexOfMatch = getReservationByReservationNumber(reservationNumber);
+        if (indexOfMatch == -1) {
+            throw new ReservationNumberNotRecognisedException("Reservation number not recognised");
+        } else {
+            BeanBagReservation reservation = (BeanBagReservation)reservations.get(reservationNumber);
+            String id = reservation.getId();
+            int quantity = reservation.getQuantity();
+            reservations.remove(indexOfMatch);
+            int beanBagIndex = getBeanBagsById(id);
+            BeanBagsStock beanbag = (BeanBagsStock)beanbags.get(beanBagIndex);
+            beanbag.unreserve(quantity);
+        }
     }
 
     public void sellBeanBags(int reservationNumber)
@@ -135,13 +187,9 @@ public class Store implements BeanBagStore, java.io.Serializable
 
     }
 
-    public int beanBagsInStock() {
-        return 0;
-    }
+    public int beanBagsInStock() { return beanBagTotal; }
 
-    public int reservedBeanBagsInStock() {
-        return 0;
-    }
+    public int reservedBeanBagsInStock() { return beanBagReservedTotal; }
 
     public int beanBagsInStock(String id) throws BeanBagIDNotRecognisedException,
     IllegalIDException {
@@ -157,22 +205,32 @@ public class Store implements BeanBagStore, java.io.Serializable
 
     }
 
-    public int getNumberOfDifferentBeanBagsInStock() {
-        return 0;
-    }
+    public int getNumberOfDifferentBeanBagsInStock() { return beanbags.size(); }
 
-    public int getNumberOfSoldBeanBags() {
-        return 0;
-    }
+    public int getNumberOfSoldBeanBags() { return numberBeanBagsSold; }
 
     public int getNumberOfSoldBeanBags(String id) throws
     BeanBagIDNotRecognisedException, IllegalIDException {
-        return 0;
+        checkId(id);
+        int indexOfMatch = this.getBeanBagsById(id);
+        if (indexOfMatch == -1) {
+            throw new BeanBagIDNotRecognisedException("Bean bag ID " + id + " is not recognised");
+        }
+        int total = 0;
+        for (int i = 0; i < soldBeanBags.size(); i++) {
+            //sale = {id, number, price}
+            Object[] sale = (Object[])soldBeanBags.get(i);
+            String beanBagId = (String)sale[0];
+            if (beanBagId.equals(id)) {
+                int price = (int)sale[2];
+                int quantity = (int)sale[1];
+                total += price * quantity;
+            }
+        }
+        return total;
     }
 
-    public int getTotalPriceOfSoldBeanBags() {
-        return 0;
-    }
+    public int getTotalPriceOfSoldBeanBags() { return totalPriceSoldBeanBags; }
 
     public int getTotalPriceOfSoldBeanBags(String id) throws
     BeanBagIDNotRecognisedException, IllegalIDException {
@@ -247,6 +305,16 @@ public class Store implements BeanBagStore, java.io.Serializable
         return -1;
     }
 
+    private int getReservationByReservationNumber(int reservationNumber) {
+        for (int i = 0; i < reservations.size(); i++) {
+            BeanBagReservation reservation = (BeanBagReservation)reservations.get(i);
+            if (reservation.getReservationNumber() == reservationNumber) {
+                return i;
+            }
+        }
+        //reservation not found
+        return -1;
+    }
     /**
      *
      * @param id id of bean bag
@@ -277,7 +345,7 @@ public class Store implements BeanBagStore, java.io.Serializable
             if (beanbag.getId().equals(id)) {
                 matchingReservations.add(beanbag);
             }
-            }
+        }
         return matchingReservations;
     }
 }

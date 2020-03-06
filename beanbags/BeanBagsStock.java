@@ -7,12 +7,8 @@ package beanbags;
  * @version 1.0
  */
 public class BeanBagsStock extends BeanBags {
-    private String id;
-    private String name;
-    private String manufacturer;
     private ObjectArrayList manufactureDates = new ObjectArrayList();
     private String additionalText;
-    private int quantity;
     private int quantityUnreserved;
     private int price;
 
@@ -106,12 +102,18 @@ public class BeanBagsStock extends BeanBags {
         }
     }
 
-    public int getPrice() {
+    public int getPrice() throws PriceNotSetException {
+        if (price == 0) {
+            throw new PriceNotSetException("Price has not been set");
+        }
         return price;
     }
 
     public void setPrice(int price) throws InvalidPriceException {
-
+        if (price < 1) {
+            throw new InvalidPriceException("Price must be greater than 0 pence");
+        }
+        this.price = price;
     }
 
     /**
@@ -120,10 +122,11 @@ public class BeanBagsStock extends BeanBags {
      * @throws IllegalNumberOfBeanBagsReservedException not enough bean bags unreserved
      */
     public void reserve(int num) throws IllegalNumberOfBeanBagsReservedException {
-        if (num > quantityUnreserved) {
-            throw new IllegalNumberOfBeanBagsReservedException("Not enough bean bags of ID " + id + " in stock.");
-        }
         quantityUnreserved -= num;
+    }
+
+    public void unreserve(int num) {
+        quantityUnreserved += num;
     }
 
     /**
@@ -169,6 +172,9 @@ public class BeanBagsStock extends BeanBags {
             short[] date = (short[]) manufactureDates.get(i);
             if (date[0] == month && date[1] == year) {
                 duplicate = true;
+                //do not need to check any more of the dates; it is a duplicate
+                break;
+
             }
         }
         if (!duplicate) {

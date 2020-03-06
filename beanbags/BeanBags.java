@@ -1,10 +1,10 @@
 package beanbags;
 
 public class BeanBags {
-    String id;
-    String name;
-    String manufacturer;
-    int quantity;
+    protected String id;
+    protected String name;
+    protected String manufacturer;
+    protected int quantity;
 
     /**
      *

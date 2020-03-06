@@ -20,12 +20,17 @@ public class BeanBagReservation {
         lowestPrice = currentPrice;
         reservationNumber = idCounter++;
     }
+
     public int getLowestPrice() { return lowestPrice; }
 
     public void setLowestPrice(int price) {
         this.lowestPrice = price;
 
     }
+
+    public int getQuantity() {return numberOfBeanbags; }
+
+    public int getReservationNumber() { return reservationNumber; }
 
     /**
      * Getter method to obtain reservation's bean bag Id.
