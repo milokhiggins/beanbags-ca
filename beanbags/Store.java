@@ -18,6 +18,7 @@ public class Store implements BeanBagStore, java.io.Serializable
     private int totalPriceSoldBeanBags = 0;
 
     /**
+     * Adds bean bags to the store.
      *
      * @param num               number of bean bags added
      * @param manufacturer      bean bag manufacturer
@@ -35,30 +36,50 @@ public class Store implements BeanBagStore, java.io.Serializable
     String id, short year, byte month)
     throws IllegalNumberOfBeanBagsAddedException, BeanBagMismatchException,
     IllegalIDException, InvalidMonthException {
+        //Adds an empty string as a parameter and Passes information to other addBeanBags method.
         this.addBeanBags(num, manufacturer, name, id, year, month, "");
     }
 
+    /**
+     *
+     *
+     * @param num               number of bean bags added
+     * @param manufacturer      bean bag manufacturer
+     * @param name              bean bag name
+     * @param id                ID of bean bag
+     * @param year              year of manufacture
+     * @param month             month of manufacture
+     * @param information       free text detailing bean bag information
+     * @throws IllegalNumberOfBeanBagsAddedException
+     * @throws BeanBagMismatchException
+     * @throws IllegalIDException
+     * @throws InvalidMonthException
+     */
     public void addBeanBags(int num, String manufacturer, String name, 
     String id, short year, byte month, String information)
     throws IllegalNumberOfBeanBagsAddedException, BeanBagMismatchException,
     IllegalIDException, InvalidMonthException {
-        int indexOfMatch = this.getBeanBagsById(id);
+        //Checks whether bean bag is currently registered in the stock.
+        int indexOfMatch = this.getBeanBagsIndexById(id);
         if (indexOfMatch == -1) {
             //if bean bag does not exist, create new bean bag object
             BeanBagsStock newBeanBagsStock = new BeanBagsStock(id, name, manufacturer, year,
                                               month, num, information);
+            //add  to list of beanbags
             this.beanbags.add((Object)newBeanBagsStock);
             beanBagTotal += num;
         } else {
-            //if bean bag does exist, increase quantity
+            //if bean bag does exist
             BeanBagsStock existingBeanBagsStock = (BeanBagsStock)this.beanbags.get(indexOfMatch);
             //check that details match with the same bean bag ID
             boolean detailsMatch = existingBeanBagsStock.checkDetailsMatch(name, manufacturer,
                                                                       information);
+            //If detail match increase quantity
             if (detailsMatch) {
                 existingBeanBagsStock.increaseQuantity(num);
                 existingBeanBagsStock.addDate(month, year);
                 beanBagTotal += num;
+            //If details do not match throw error
             } else {
                 throw new BeanBagMismatchException("The ID entered does not match the details of " +
                         "the bean bag");
@@ -68,62 +89,179 @@ public class Store implements BeanBagStore, java.io.Serializable
 
     public void setBeanBagPrice(String id, int priceInPence) 
     throws InvalidPriceException, BeanBagIDNotRecognisedException, IllegalIDException {
+        //if bean bag price entered is less than zero throws InvalidPriceException
         if (priceInPence < 1) {
             throw new InvalidPriceException("Price must be greater than 0");
         }
-        //check that ID is valid, throw exception if not
+        //check that ID is valid, throw exception if not throws IllegalIdException
         checkId(id);
-        int beanBagIndex = this.getBeanBagsById(id);
-        //check that the bean bag exists in stock
+        int beanBagIndex = this.getBeanBagsIndexById(id);
+        //check that the bean bag exists in stock if not throws BeanBagIDNotRecognisedException
         if (beanBagIndex == -1) {
             throw new BeanBagIDNotRecognisedException("Bean bag ID " + id + " is not recognised.");
-        } else {
-            BeanBagsStock beanBagsStock = (BeanBagsStock) this.beanbags.get(beanBagIndex);
-            if (beanBagsStock.getQuantityReserved() > 0) {
-                ObjectArrayList reservations = this.getReservationsByBeanBagId(id);
-                for (int i = 0; i < reservations.size(); i++) {
-                    BeanBagReservation reservation = (BeanBagReservation) reservations.get(i);
-                    //update lowest price if the new price is lower
-                    int lowPrice = reservation.getLowestPrice();
-                    if (priceInPence < lowPrice) {
-                        reservation.setLowestPrice(priceInPence);
-                    }
-                }
+        }
+        //get the bean bag stock record from of the list of bean bags
+        BeanBagsStock beanBagsStock = (BeanBagsStock) this.beanbags.get(beanBagIndex);
+
+        // if bean bag has reservations update them if appropriate.
+        if (beanBagsStock.getQuantityReserved() > 0) {
+        updateReservationLowestPrice(id, priceInPence);
+        }
+        beanBagsStock.setPrice(priceInPence);
+    }
+
+    /**
+     * Updates beanbag reservations lowest price if new price is lower.
+     *
+     * @param id
+     * @param priceInPence
+     */
+    private void updateReservationLowestPrice(String id, int priceInPence){
+        //gets reservation(s)
+        ObjectArrayList matchingReservations = this.getReservationsByBeanBagId(id);
+        //iterates through list containing reservation(s)
+        for (int i = 0; i < matchingReservations.size(); i++) {
+            BeanBagReservation matchingReservation = (BeanBagReservation) matchingReservations.get(i);
+            //update lowest price if the new price is lower
+            int lowPrice = matchingReservation.getLowestPrice();
+            if (priceInPence < lowPrice) {
+                matchingReservation.setLowestPrice(priceInPence);
             }
-            beanBagsStock.setPrice(priceInPence);
         }
     }
 
+    /**
+     * Sells bean bags.
+     *
+     * @param num           number of bean bags to be sold
+     * @param id            ID of bean bags to be sold
+     * @throws BeanBagNotInStockException
+     * @throws InsufficientStockException
+     * @throws IllegalNumberOfBeanBagsSoldException
+     * @throws PriceNotSetException
+     * @throws BeanBagIDNotRecognisedException
+     * @throws IllegalIDException
+     */
     public void sellBeanBags(int num, String id) throws BeanBagNotInStockException,
     InsufficientStockException, IllegalNumberOfBeanBagsSoldException,
     PriceNotSetException, BeanBagIDNotRecognisedException, IllegalIDException {
+        //check id is valid, if not throw IllegalIDException
         checkId(id);
-        int indexOfMatch = this.getBeanBagsById(id);
+        //gets index of bean bag stock in beanbags list
+        int indexOfMatch = this.getBeanBagsIndexById(id);
+        //if the ID is not found in the beanbags list of bean bag stocks throws error
         if (indexOfMatch == -1) {
+            //if the beanbag has been sold before throws BeanBagNotInStockException
             if (checkBeanBagSold(id)) {
-                throw new BeanBagNotInStockException("Bean bag ID "+id+" is no longer in stock.");
-            } else {
-                throw new BeanBagIDNotRecognisedException("Bean bag ID "+id+" is not recognised");
+                throw new BeanBagNotInStockException("Bean bag ID " + id + " is no longer in stock.");
             }
-        } else {
-            BeanBagsStock beanbag = (BeanBagsStock)beanbags.get(indexOfMatch);
-            int numberUnreserved = beanbag.getQuantityUnreserved();
-            if (num < 1) {
-                throw new IllegalNumberOfBeanBagsSoldException("Cannot sell less than 1 bean bag");
-            } else if (numberUnreserved < num) {
-                throw new InsufficientStockException("Not enough unreserved stock.");
-            } else {
-                beanbag.decreaseQuantity(num);
-                int price = beanbag.getPrice();
-                Object[] beanBagSold = {id, num, price};
-                soldBeanBags.add(beanBagSold);
-                numberBeanBagsSold += num;
-                beanBagTotal -= num;
-                totalPriceSoldBeanBags += (num * beanbag.getPrice());
-            }
+            //Else throw BeanBagIDNotRecognisedException
+            throw new BeanBagIDNotRecognisedException("Bean bag ID " + id + " is not recognised");
         }
+        // get matching bean bag stock object from beanbags list.
+        BeanBagsStock beanbag = (BeanBagsStock)beanbags.get(indexOfMatch);
+        //get quantity of reserved bean bags for that beanbags
+        int numberUnreserved = beanbag.getQuantityUnreserved();
+
+        // if number of beanbags attempting to be sold is less than one throws
+        // IllegalNumberOfBeanBagsSoldException.
+        if (num < 1) {
+            throw new IllegalNumberOfBeanBagsSoldException("Cannot sell less than 1 bean bag");
+        //checks there are enough unreserved beanbags in stock if not throws InsufficientStockException
+        } else if (numberUnreserved < num) {
+            throw new InsufficientStockException("Not enough unreserved stock.");
+        }
+        //decreases number of bean bags in that bean bag stock record.
+        beanbag.decreaseQuantity(num);
+        //getting the current price of the beanbag
+        int price = beanbag.getPrice();
+        int priceTotal = price*num
+        //Creating a list and adding to bean bags sold list record
+
+        //search i fin list get number increase numebr
+        int index = getSoldBeanBagIndexByID(id);
+
+        //if Id is not in list create new Object array and add
+       if(index==-1){
+           Object[] beanBagSold = {id, num, priceTotal};
+           soldBeanBags.add(beanBagSold);
+       //if ID is in list add to values in list.
+       }else{
+           //Get object array from sold bean bags array with matching ID
+           Object[] soldBeanBagRecord = (Object[])soldBeanBags.get(index);
+           //Update Total price of sold beanbags
+           int recordPrice = (int)soldBeanBagRecord[2] + priceTotal;
+           soldBeanBagRecord[2] = recordPrice;
+           //Update total number of sold beanbags
+           int recordNum = (int)soldBeanBagRecord[1] + num;
+           soldBeanBagRecord[1] = recordNum;
+
+
+        }
+        //updating store fields numberBeanBagsSold, beanBagTotal, totalPriceSoldBeanBags.
+        numberBeanBagsSold += num;
+        beanBagTotal -= num;
+        totalPriceSoldBeanBags += (priceTotal);
+
     }
 
+    /**
+     * Sells bean bags by reservation number.
+     * @param reservationNumber           unique reservation number used to find
+     *                                    beanbag(s) to be sold
+     * @throws ReservationNumberNotRecognisedException  error thrown if reservation number is not
+     * available in reservations list.
+     */
+    public void sellBeanBags(int reservationNumber)
+            throws ReservationNumberNotRecognisedException {
+        int matchingReservationIndex = getReservationByReservationNumber(reservationNumber);
+        //if no reservation exists with that ID throws ReservationNumberNotRecognisedException
+        if (matchingReservationIndex==-1){
+            throw new ReservationNumberNotRecognisedException("Reservation number is not recognised.");
+        }
+        //Get bean bag reservation
+        BeanBagReservation matchingReservation = (BeanBagReservation) reservations.get(matchingReservationIndex);
+        //getting fields id, num and price form reservation.
+        String id = matchingReservation.getId();
+        int num = matchingReservation.getNumberOfBeanbags();
+        int price = matchingReservation.getLowestPrice();
+
+        //remove quantity from the relevant bean bag stock quantity.
+        int beanBagsIndex = this.getBeanBagsIndexById(id);
+        BeanBagsStock beanBagStock = (BeanBagsStock)beanbags.get(beanBagsIndex);
+        beanBagStock.decreaseQuantity(num);
+
+        int priceTotal= num*price ;
+        //updating store fields: numberBeanBagsSold, beanBagTotal, totalPriceSoldBeanBags,
+        //beanBagReservedTotal
+        numberBeanBagsSold += num;
+        beanBagTotal -= num;
+        totalPriceSoldBeanBags += (priceTotal);
+        beanBagReservedTotal -= num;
+
+        //search i fin list get number increase numebr
+        int index = getSoldBeanBagIndexByID(id);
+        //Creating a list and adding to bean bags sold list record
+        //if Id is not in list create new Object array and add
+        if(index==-1){
+            Object[] beanBagSold = {id, num, priceTotal};
+            soldBeanBags.add(beanBagSold);
+            //if ID is in list add to values in list.
+        }else {
+            //Get object array from sold bean bags array with matching ID
+            Object[] soldBeanBagRecord = (Object[]) soldBeanBags.get(index);
+            //Update Total price of sold beanbags
+            int recordPrice = (int) soldBeanBagRecord[2] + priceTotal;
+            soldBeanBagRecord[2] = recordPrice;
+            //Update total number of sold beanbags
+            int recordNum = (int) soldBeanBagRecord[1] + num;
+            soldBeanBagRecord[1] = recordNum;
+        }
+
+        //remove from reservations
+        reservations.remove(matchingReservationIndex);
+
+    }
     /**
      * Reserve bean bags and return the reservation number
      * @param num           number of bean bags to be reserved
@@ -140,7 +278,7 @@ public class Store implements BeanBagStore, java.io.Serializable
     InsufficientStockException, IllegalNumberOfBeanBagsReservedException,
     PriceNotSetException, BeanBagIDNotRecognisedException, IllegalIDException {
         checkId(id);
-        int indexOfMatch = this.getBeanBagsById(id);
+        int indexOfMatch = this.getBeanBagsIndexById(id);
         if (indexOfMatch == -1) {
             if (checkBeanBagSold(id)) {
                 throw new BeanBagNotInStockException("Bean bag ID "+id+" is no longer in stock.");
@@ -176,15 +314,10 @@ public class Store implements BeanBagStore, java.io.Serializable
             String id = reservation.getId();
             int quantity = reservation.getQuantity();
             reservations.remove(indexOfMatch);
-            int beanBagIndex = getBeanBagsById(id);
+            int beanBagIndex = getBeanBagsIndexById(id);
             BeanBagsStock beanbag = (BeanBagsStock)beanbags.get(beanBagIndex);
             beanbag.unreserve(quantity);
         }
-    }
-
-    public void sellBeanBags(int reservationNumber)
-    throws ReservationNumberNotRecognisedException {
-
     }
 
     public int beanBagsInStock() { return beanBagTotal; }
@@ -211,8 +344,10 @@ public class Store implements BeanBagStore, java.io.Serializable
 
     public int getNumberOfSoldBeanBags(String id) throws
     BeanBagIDNotRecognisedException, IllegalIDException {
+        // Checks the Id is valid. If the ID isn't it throws an IllegalIDException.
         checkId(id);
-        int indexOfMatch = this.getBeanBagsById(id);
+        //checks that the ID exists.
+        int indexOfMatch = this.getBeanBagsIndexById(id);
         if (indexOfMatch == -1) {
             throw new BeanBagIDNotRecognisedException("Bean bag ID " + id + " is not recognised");
         }
@@ -234,7 +369,7 @@ public class Store implements BeanBagStore, java.io.Serializable
 
     public int getTotalPriceOfSoldBeanBags(String id) throws
     BeanBagIDNotRecognisedException, IllegalIDException {
-        return 0;
+
     }
 
     public int getTotalPriceOfReservedBeanBags() {
@@ -295,13 +430,24 @@ public class Store implements BeanBagStore, java.io.Serializable
      * @param id id of bean bag
      * @return index of bean bag, or -1 if no matching bean bag.
      */
-    private int getBeanBagsById (String id) {
+    private int getBeanBagsIndexById (String id) {
         for (int i = 0; i < beanbags.size(); i++) {
             BeanBagsStock beanbag = (BeanBagsStock)beanbags.get(i);
             if (beanbag.getId().equals(id)) {
                 return i;
             }
         }
+        return -1;
+    }
+
+    private int getSoldBeanBagIndexByID(String id){
+        for (int i = 0; i <soldBeanBags.size(); i++) {
+            Object[] soldBeanBagRecord = (Object[]) soldBeanBags.get(i);
+            if (((String)soldBeanBagRecord[0]).equals(id)){
+                return i;
+            }
+        }
+        //reservation not found
         return -1;
     }
 

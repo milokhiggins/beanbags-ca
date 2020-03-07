@@ -31,28 +31,36 @@ public class BeanBagsStock extends BeanBags {
 
     /**
      *
-     * @param id                8 digit hexadecimal ID of bean bag
-     * @param name              bean bag name
-     * @param manufacturer      bean bag manufacturer
-     * @param yearManufactured  year of manufacture
-     * @param monthManufactured month of manufacture
-     * @param quantity          number of bean bags
+     * @param id
+     * @param name
+     * @param manufacturer
+     * @param yearManufactured
+     * @param monthManufactured
+     * @param quantity
+     * @throws IllegalIDException
+     * @throws InvalidMonthException
+     * @throws IllegalNumberOfBeanBagsAddedException
      */
     public BeanBagsStock(String id, String name, String manufacturer, short yearManufactured,
                     byte monthManufactured, int quantity) throws
                     IllegalIDException, InvalidMonthException, IllegalNumberOfBeanBagsAddedException
     {
+        // initialises id name,  manufacturer, quantity
         super(id, name, manufacturer, quantity);
         //check id is valid, if not throw IllegalIDException
         BeanBagsStock.checkId(id);
+        //checks that at least one bean bag is added if not throws IllegalNumberOfBeanBagsAddedException
         if (quantity<=0){
             throw new IllegalNumberOfBeanBagsAddedException("Must add at least one beanbag");
         }
+        //checks that the month manufactured is valid. If not throws InvalidMonthException
         if (monthManufactured < 1 || monthManufactured > 12){
             throw new InvalidMonthException("Month has to be a number between 1 and 12");
         }
+        //initialises date
         short[] newDate = {monthManufactured, yearManufactured};
         manufactureDates.add(newDate);
+        //initialises quantity
         this.quantityUnreserved = quantity;
     }
 
@@ -90,10 +98,7 @@ public class BeanBagsStock extends BeanBags {
      * @return Returns true if there are none left, otherwise returns false
      * @throws InsufficientStockException not enough stock
      */
-    public boolean decreaseQuantity(int num) throws InsufficientStockException {
-        if (num > quantity) {
-            throw new InsufficientStockException("Not enough bean bags of ID " + id + " in stock.");
-        }
+    public boolean decreaseQuantity(int num){
         quantity -= num;
         if (quantity == 0) {
             return true;
