@@ -135,11 +135,8 @@ public class Store implements BeanBagStore, java.io.Serializable
         //iterates through list containing reservation(s)
         for (int i = 0; i < matchingReservations.size(); i++) {
             BeanBagReservation matchingReservation = (BeanBagReservation) matchingReservations.get(i);
-            //update lowest price if the new price is lower
-            int lowPrice = matchingReservation.getLowestPrice();
-            if (priceInPence < lowPrice) {
-                matchingReservation.setLowestPrice(priceInPence);
-            }
+            //Call function that will check and update the price if it i lower.
+            matchingReservation.setLowestPrice(priceInPence);
         }
     }
 
