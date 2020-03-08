@@ -1,6 +1,8 @@
 package beanbags;
 
-public class BeanBagReservation {
+import java.io.Serializable;
+
+public class BeanBagReservation implements Serializable {
 
     private String beanBagID;
     private int numberOfBeanbags;
@@ -37,6 +39,10 @@ public class BeanBagReservation {
      * @return bean bag's Id.
      */
     public String getId(){ return beanBagID; }
+
+    public void setId(String id){
+        beanBagID = id;
+    }
 
     public int getNumberOfBeanbags() { return numberOfBeanbags; }
 }

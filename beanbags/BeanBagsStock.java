@@ -1,5 +1,6 @@
 package beanbags;
 
+
 /**
  * BeanBags ...
  *
@@ -84,10 +85,7 @@ public class BeanBagsStock extends BeanBags {
      * Increase quantity of bean bag in stock.
      * @param num Number to increase quantity by
      */
-    public void increaseQuantity(int num) throws IllegalNumberOfBeanBagsAddedException {
-        if (num < 1) {
-            throw new IllegalNumberOfBeanBagsAddedException("Cannot less than 1  bean bag");
-        }
+    public void increaseQuantity(int num) {
         quantity += num;
         quantityUnreserved += num;
     }
@@ -124,9 +122,8 @@ public class BeanBagsStock extends BeanBags {
     /**
      * Reserve bean bags.
      * @param num Number to reserve.
-     * @throws IllegalNumberOfBeanBagsReservedException not enough bean bags unreserved
      */
-    public void reserve(int num) throws IllegalNumberOfBeanBagsReservedException {
+    public void reserve(int num) {
         quantityUnreserved -= num;
     }
 

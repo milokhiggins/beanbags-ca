@@ -1,6 +1,8 @@
 package beanbags;
 
-public class BeanBags {
+import java.io.Serializable;
+
+public class BeanBags implements Serializable {
     protected String id;
     protected String name;
     protected String manufacturer;
