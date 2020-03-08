@@ -105,10 +105,6 @@ public class Store implements BeanBagStore, java.io.Serializable
      */
     public void setBeanBagPrice(String id, int priceInPence) 
     throws InvalidPriceException, BeanBagIDNotRecognisedException, IllegalIDException {
-        //if bean bag price entered is less than zero throws InvalidPriceException
-        if (priceInPence < 1) {
-            throw new InvalidPriceException("Price must be greater than 0");
-        }
         //check that ID is valid, throw exception if not throws IllegalIdException
         BeanBags.checkId(id);
         int beanBagIndex = this.getBeanBagsIndexById(id);
@@ -119,11 +115,12 @@ public class Store implements BeanBagStore, java.io.Serializable
         //get the bean bag stock record from of the list of bean bags
         BeanBagsStock beanBagsStock = (BeanBagsStock) this.beanbags.get(beanBagIndex);
 
+        //throws InvalidPriceException if price is less than 1
+        beanBagsStock.setPrice(priceInPence);
         // if bean bag has reservations update them if appropriate.
         if (beanBagsStock.getQuantityReserved() > 0) {
         updateReservationLowestPrice(id, priceInPence);
         }
-        beanBagsStock.setPrice(priceInPence);
     }
 
     /**
