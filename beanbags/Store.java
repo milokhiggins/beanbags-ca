@@ -32,10 +32,11 @@ public class Store implements BeanBagStore, java.io.Serializable
      * @param id                ID of bean bag
      * @param year              year of manufacture
      * @param month             month of manufacture
-     * @throws IllegalNumberOfBeanBagsAddedException
-     * @throws BeanBagMismatchException
-     * @throws IllegalIDException
-     * @throws InvalidMonthException
+     * @throws IllegalNumberOfBeanBagsAddedException Number of bean bags added is less than 1
+     * @throws BeanBagMismatchException              Details do not match existing bean bag details
+     * @throws IllegalIDException                    ID is invalid (not a positive, 8 digit 
+     * hexadecimal number)
+     * @throws InvalidMonthException                 Month is not valid (a number between 1 and 12)
      */
 
     public void addBeanBags(int num, String manufacturer, String name, 
@@ -47,7 +48,7 @@ public class Store implements BeanBagStore, java.io.Serializable
     }
 
     /**
-     *
+     * Adds bean bags to the store.
      *
      * @param num               number of bean bags added
      * @param manufacturer      bean bag manufacturer
@@ -56,10 +57,11 @@ public class Store implements BeanBagStore, java.io.Serializable
      * @param year              year of manufacture
      * @param month             month of manufacture
      * @param information       free text detailing bean bag information
-     * @throws IllegalNumberOfBeanBagsAddedException
-     * @throws BeanBagMismatchException
-     * @throws IllegalIDException
-     * @throws InvalidMonthException
+     * @throws IllegalNumberOfBeanBagsAddedException Number of bean bags added is less than 1
+     * @throws BeanBagMismatchException              Details do not match existing bean bag details
+     * @throws IllegalIDException                    ID is invalid (not a positive, 8 digit
+     * hexadecimal number)
+     * @throws InvalidMonthException                 Month is not valid (a number between 1 and 12)
      */
     public void addBeanBags(int num, String manufacturer, String name, 
     String id, short year, byte month, String information)
@@ -93,6 +95,14 @@ public class Store implements BeanBagStore, java.io.Serializable
         }
     }
 
+    /**
+     * Sets the price of a bean bag.
+     * @param id                ID of bean bags
+     * @param priceInPence      bean bag price in pence
+     * @throws InvalidPriceException            Price is not valid (less than 1)
+     * @throws BeanBagIDNotRecognisedException  ID is not recognised
+     * @throws IllegalIDException               ID is not valid
+     */
     public void setBeanBagPrice(String id, int priceInPence) 
     throws InvalidPriceException, BeanBagIDNotRecognisedException, IllegalIDException {
         //if bean bag price entered is less than zero throws InvalidPriceException
@@ -100,7 +110,7 @@ public class Store implements BeanBagStore, java.io.Serializable
             throw new InvalidPriceException("Price must be greater than 0");
         }
         //check that ID is valid, throw exception if not throws IllegalIdException
-        checkId(id);
+        BeanBags.checkId(id);
         int beanBagIndex = this.getBeanBagsIndexById(id);
         //check that the bean bag exists in stock if not throws BeanBagIDNotRecognisedException
         if (beanBagIndex == -1) {
@@ -119,8 +129,8 @@ public class Store implements BeanBagStore, java.io.Serializable
     /**
      * Updates beanbag reservations lowest price if new price is lower.
      *
-     * @param id
-     * @param priceInPence
+     * @param id            ID of bean bag
+     * @param priceInPence  Price to set reservation price to 
      */
     private void updateReservationLowestPrice(String id, int priceInPence){
         //gets reservation(s)
@@ -141,18 +151,18 @@ public class Store implements BeanBagStore, java.io.Serializable
      *
      * @param num           number of bean bags to be sold
      * @param id            ID of bean bags to be sold
-     * @throws BeanBagNotInStockException
-     * @throws InsufficientStockException
-     * @throws IllegalNumberOfBeanBagsSoldException
-     * @throws PriceNotSetException
-     * @throws BeanBagIDNotRecognisedException
-     * @throws IllegalIDException
+     * @throws BeanBagNotInStockException           Bean bag is not in stock
+     * @throws InsufficientStockException           There is insufficient stock to make the sale
+     * @throws IllegalNumberOfBeanBagsSoldException Number of bean bags being sold is less than 1
+     * @throws PriceNotSetException                 Price of bean bag has not been set
+     * @throws BeanBagIDNotRecognisedException      ID is not recognised
+     * @throws IllegalIDException                   ID is not valid
      */
     public void sellBeanBags(int num, String id) throws BeanBagNotInStockException,
     InsufficientStockException, IllegalNumberOfBeanBagsSoldException,
     PriceNotSetException, BeanBagIDNotRecognisedException, IllegalIDException {
         //check id is valid, if not throw IllegalIDException
-        checkId(id);
+        BeanBags.checkId(id);
         //gets index of bean bag stock in beanbags list
         int indexOfMatch = this.getBeanBagsIndexById(id);
         //if the ID is not found in the beanbags list of bean bag stocks throws error
@@ -189,12 +199,6 @@ public class Store implements BeanBagStore, java.io.Serializable
         //Creating a list and adding to bean bags sold list record
 
         updateSaleTracking(id, num, priceTotal);
-
-        //updating store fields numberBeanBagsSold, beanBagTotal, totalPriceSoldBeanBags.
-        numberBeanBagsSold += num;
-        beanBagTotal -= num;
-        totalPriceSoldBeanBags += (priceTotal);
-
     }
 
     /**
@@ -208,7 +212,7 @@ public class Store implements BeanBagStore, java.io.Serializable
             throws ReservationNumberNotRecognisedException {
         int matchingReservationIndex = getReservationByReservationNumber(reservationNumber);
         //if no reservation exists with that ID throws ReservationNumberNotRecognisedException
-        if (matchingReservationIndex==-1){
+        if (matchingReservationIndex == -1) {
             throw new ReservationNumberNotRecognisedException("Reservation number is not recognised.");
         }
         //Get bean bag reservation
@@ -228,20 +232,22 @@ public class Store implements BeanBagStore, java.io.Serializable
         }
 
         int priceTotal= num*price ;
-        //updating store fields: numberBeanBagsSold, beanBagTotal, totalPriceSoldBeanBags,
-        //beanBagReservedTotal
-        numberBeanBagsSold += num;
-        beanBagTotal -= num;
-        totalPriceSoldBeanBags += (priceTotal);
+        //updating store fields: beanBagReservedTotal
         beanBagReservedTotal -= num;
 
         updateSaleTracking(id, num, priceTotal);
 
         //remove from reservations
         reservations.remove(matchingReservationIndex);
-
     }
 
+    /**
+     * Update sale tracking with new sale information.
+     * 
+     * @param id         id of sold bean bags
+     * @param num        number of sold bean bags
+     * @param totalPrice total price of sale
+     */
     private void updateSaleTracking(String id, int num, int totalPrice) {
         //search if in list get number increase number
         int index = getSoldBeanBagIndexByID(id);
@@ -261,6 +267,10 @@ public class Store implements BeanBagStore, java.io.Serializable
             int recordNum = (int) soldBeanBagRecord[1] + num;
             soldBeanBagRecord[1] = recordNum;
         }
+        //updating store fields: numberBeanBagsSold, beanBagTotal, totalPriceSoldBeanBags
+        numberBeanBagsSold += num;
+        beanBagTotal -= num;
+        totalPriceSoldBeanBags += totalPrice;
     }
 
     /**
@@ -268,17 +278,19 @@ public class Store implements BeanBagStore, java.io.Serializable
      * @param num           number of bean bags to be reserved
      * @param id            ID of bean bags to be reserved
      * @return Reservation number
-     * @throws BeanBagNotInStockException
-     * @throws InsufficientStockException
-     * @throws IllegalNumberOfBeanBagsReservedException
-     * @throws PriceNotSetException
-     * @throws BeanBagIDNotRecognisedException
-     * @throws IllegalIDException
+     * @throws BeanBagNotInStockException               None of this type of bean bag is in stock
+     * @throws InsufficientStockException               There is insufficient stock to make the 
+     * reservation.
+     * @throws IllegalNumberOfBeanBagsReservedException Trying to reserve less than 1 bean bag
+     * @throws PriceNotSetException                     Trying to reserve a bean bag when it's price
+     * has not been set
+     * @throws BeanBagIDNotRecognisedException          ID does not match any existing bean bags
+     * @throws IllegalIDException                       ID is invalid
      */
     public int reserveBeanBags(int num, String id) throws BeanBagNotInStockException,
     InsufficientStockException, IllegalNumberOfBeanBagsReservedException,
     PriceNotSetException, BeanBagIDNotRecognisedException, IllegalIDException {
-        checkId(id);
+        BeanBags.checkId(id);
         int indexOfMatch = this.getBeanBagsIndexById(id);
         if (indexOfMatch == -1) {
             if (checkBeanBagSold(id)) {
@@ -305,6 +317,12 @@ public class Store implements BeanBagStore, java.io.Serializable
         }
     }
 
+    /**
+     * Unreserve bean bags.
+     * @param reservationNumber           reservation number
+     * @throws ReservationNumberNotRecognisedException Reservation number does not match any 
+     * existing reservation.
+     */
     public void unreserveBeanBags(int reservationNumber)
     throws ReservationNumberNotRecognisedException {
         int indexOfMatch = getReservationByReservationNumber(reservationNumber);
@@ -321,14 +339,29 @@ public class Store implements BeanBagStore, java.io.Serializable
         }
     }
 
+    /**
+     * Access method for total number of bean bags in stock (including reservations).
+     * @return Total number of bean bags in stock
+     */
     public int beanBagsInStock() { return beanBagTotal; }
 
+    /**
+     * Access method for total number of reserved bean bags.
+     * @return Total number of reserved bean bags
+     */
     public int reservedBeanBagsInStock() { return beanBagReservedTotal; }
 
+    /**
+     * Get number of bean bags in stock of a particular ID
+     * @param id            ID of bean bags
+     * @return number of matching bean bags in stock
+     * @throws BeanBagIDNotRecognisedException  No bean bags of this ID exist in stock
+     * @throws IllegalIDException               ID is invalid
+     */
     public int beanBagsInStock(String id) throws BeanBagIDNotRecognisedException,
     IllegalIDException {
         //check ID is valid; throws IllegalIDException if not
-        checkId(id);
+        BeanBags.checkId(id);
         int beanbagIndex = getBeanBagsIndexById(id);
         if (beanbagIndex == -1) {
             //no bean bags match this ID
@@ -375,7 +408,7 @@ public class Store implements BeanBagStore, java.io.Serializable
     ClassNotFoundException {
         FileInputStream rawFileIn = new FileInputStream(filename);
         BufferedInputStream fileIn = new BufferedInputStream(rawFileIn);
-        ObjectArrayList newContents = null;
+        ObjectArrayList newContents;
         try (ObjectInputStream objectIn = new ObjectInputStream(fileIn)) {
             //read in list of attributes
             Object obj = objectIn.readObject();
@@ -394,14 +427,29 @@ public class Store implements BeanBagStore, java.io.Serializable
         }
     }
 
+    /**
+     * Access method for total number of different types of bean bags in stock.
+     * @return number of different bean bags in stock
+     */
     public int getNumberOfDifferentBeanBagsInStock() { return beanbags.size(); }
 
+    /**
+     * Access method for total number of sold bean bags.
+     * @return number of sold bean bags
+     */
     public int getNumberOfSoldBeanBags() { return numberBeanBagsSold; }
 
-    private int getSoldBeanBagAttribute(String id, int attributeIndex) throws IllegalIDException,
+    /**
+     * Get a sale by it's ID
+     * @param id id of bean bag
+     * @return Record of sale: [String id, int totalSold, int totalPrice]
+     * @throws IllegalIDException               ID is invalid
+     * @throws BeanBagIDNotRecognisedException  No bean bag matching this ID
+     */
+    private Object[] getSoldBeanBagRecord(String id) throws IllegalIDException,
             BeanBagIDNotRecognisedException {
         // Checks the Id is valid. If the ID isn't it throws an IllegalIDException.
-        checkId(id);
+        BeanBags.checkId(id);
         //checks that the ID exists in soldBeanBags list
         boolean sold = this.checkBeanBagSold(id);
         if (!sold) {
@@ -410,34 +458,58 @@ public class Store implements BeanBagStore, java.io.Serializable
             if (indexOfMatch == -1) {
                 throw new BeanBagIDNotRecognisedException("Bean bag ID " + id + " is not recognised");
             }
-            //no record of sale in soldBeanBags means attribute is zero
-            return 0;
+            //no record of sale in soldBeanBags means number sold and total price is zero
+            return new Object[]{id, 0, 0};
         }
         for (int i = 0; i < soldBeanBags.size(); i++) {
             //sale = {id, totalNumber, totalPrice}
             Object[] sale = (Object[]) soldBeanBags.get(i);
             String beanBagId = (String) sale[0];
             if (beanBagId.equals(id)) {
-                return (int)sale[attributeIndex];
+                return sale;
             }
         }
         //this section of code should never execute under normal circumstances
         assert false : "Invariant (soldBeanBags) changed during execution!";
-        return 0;
+        return null;
     }
 
+    /**
+     * Get the number of sold bean bags of a particular ID
+     * @param id ID of bean bags
+     * @return number of sold bean bags
+     * @throws BeanBagIDNotRecognisedException No bean bag matches the given ID
+     * @throws IllegalIDException              ID is invalid
+     */
     public int getNumberOfSoldBeanBags(String id) throws
     BeanBagIDNotRecognisedException, IllegalIDException {
-        return getSoldBeanBagAttribute(id, 1);
+        Object[] record = getSoldBeanBagRecord(id);
+        return (int)record[1];
     }
 
+    /**
+     * Access method for the total price of sold bean bagg
+     * @return total price of sold bean bags
+     */
     public int getTotalPriceOfSoldBeanBags() { return totalPriceSoldBeanBags; }
 
+    /**
+     * Get the total price of sold bean bags for a particular ID
+     * @param id ID of bean bags
+     * @return total price of sold bean bags
+     * @throws BeanBagIDNotRecognisedException No bean bag matches the given id
+     * @throws IllegalIDException              id is invalid
+     */
     public int getTotalPriceOfSoldBeanBags(String id) throws
     BeanBagIDNotRecognisedException, IllegalIDException {
-        return getSoldBeanBagAttribute(id, 2);
+        Object[] record =  getSoldBeanBagRecord(id);
+        return (int)record[2];
     }
 
+    /**
+     * Access method for the total price of reserved bean bags
+     * @return the total price of reserved bean bags
+     */
     public int getTotalPriceOfReservedBeanBags() {
         int total = 0;
         //add up total price for every reservation in list
@@ -460,7 +532,7 @@ public class Store implements BeanBagStore, java.io.Serializable
     public String getBeanBagDetails(String id) throws
     BeanBagIDNotRecognisedException, IllegalIDException {
         //check ID is valid; throws IllegalIDException if not
-        checkId(id);
+        BeanBags.checkId(id);
         //get index of beanbag
         int beanbagIndex = getBeanBagsIndexById(id);
         if (beanbagIndex == -1) {
@@ -497,11 +569,19 @@ public class Store implements BeanBagStore, java.io.Serializable
         soldBeanBags = new ObjectArrayList();
         totalPriceSoldBeanBags = 0;
     }
-     
+
+    /**
+     *
+     * @param oldId             old ID of bean bags
+     * @param replacementId     replacement ID of bean bags
+     * @throws BeanBagIDNotRecognisedException ID does not match any existing IDs
+     * @throws IllegalIDException              ID is invalid
+     */
     public void replace(String oldId, String replacementId) 
     throws BeanBagIDNotRecognisedException, IllegalIDException {
-        //check id is valid; throws IllegalIDException if it isn't
-        checkId(oldId);
+        //check ids are valid; throws IllegalIDException if it isn't
+        BeanBags.checkId(oldId);
+        BeanBags.checkId(replacementId);
 
         int beanbagIndex = getBeanBagsIndexById(oldId);
         boolean sold = checkBeanBagSold(oldId);
@@ -540,37 +620,6 @@ public class Store implements BeanBagStore, java.io.Serializable
     }
 
     /**
-     * Static method to check if an ID is valid, if not then throw an IllegalIDException
-     * @param id id to check
-     * @throws IllegalIDException id is not valid
-     */
-    private static void checkId(String id) throws IllegalIDException{
-        //  checks if the string is positive,
-        int hexadecimalNumber;
-        //  checks if the string is a hexadecimal number.
-        try{
-            hexadecimalNumber = Integer.parseInt(id,16);
-        }
-        catch(NumberFormatException e){
-            throw new IllegalIDException("ID must be hexadecimal number");
-        }
-
-        //  checks if the ID is positive
-        if (hexadecimalNumber < 0 ){
-            throw new IllegalIDException("ID must be positive");
-        }
-        // checks that 8 digits do not include a plus symbol.
-        if (id.startsWith("+")){
-            throw new IllegalIDException("ID must not contain + symbol");
-        }
-
-        // checks if the ID is 8 characters long.
-        if (id.length() != 8 ){
-            throw new IllegalIDException("ID must be eight characters");
-        }
-    }
-
-    /**
      * Get the index of the bean bag if it is in stock, otherwise returns -1
      * @param id id of bean bag
      * @return index of bean bag, or -1 if no matching bean bag.
@@ -585,8 +634,13 @@ public class Store implements BeanBagStore, java.io.Serializable
         return -1;
     }
 
+    /**
+     * Get the index of a bean bag sale record. Returns -1 if no matching sale exists.
+     * @param id bean bag id
+     * @return index of sale record or -1 if no match found
+     */
     private int getSoldBeanBagIndexByID(String id){
-        for (int i = 0; i <soldBeanBags.size(); i++) {
+        for (int i = 0; i < soldBeanBags.size(); i++) {
             Object[] soldBeanBagRecord = (Object[]) soldBeanBags.get(i);
             if (((String)soldBeanBagRecord[0]).equals(id)){
                 return i;
@@ -596,6 +650,11 @@ public class Store implements BeanBagStore, java.io.Serializable
         return -1;
     }
 
+    /**
+     * Get a the index of a reservation. Returns -1 if no matching reservation is found.
+     * @param reservationNumber reservation number
+     * @return index of reservation, or -1 if no matching reservation found
+     */
     private int getReservationByReservationNumber(int reservationNumber) {
         for (int i = 0; i < reservations.size(); i++) {
             BeanBagReservation reservation = (BeanBagReservation)reservations.get(i);
@@ -606,8 +665,9 @@ public class Store implements BeanBagStore, java.io.Serializable
         //reservation not found
         return -1;
     }
+
     /**
-     *
+     * Check if a bean bag has been sold.
      * @param id id of bean bag
      * @return true if bean bag id has been sold before, false otherwise.
      */
@@ -622,8 +682,7 @@ public class Store implements BeanBagStore, java.io.Serializable
     }
 
     /**
-     * Iterates through bean bag reservations and returns a list of the beanbag reservations for
-     * an id.
+     * Get list of reservations which match the given bean bag ID
      * @param id id of bean bag
      * @return list of bean bag reservation objects
      */

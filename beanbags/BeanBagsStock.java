@@ -24,8 +24,8 @@ public class BeanBagsStock extends BeanBags {
      * @param additionalText    description or additional details about the bean bag
      */
     public BeanBagsStock(String id, String name, String manufacturer, short yearManufactured,
-                     byte monthManufactured, int quantity, String additionalText) throws IllegalIDException,
-                     InvalidMonthException, IllegalNumberOfBeanBagsAddedException {
+            byte monthManufactured, int quantity, String additionalText) throws IllegalIDException,
+            InvalidMonthException, IllegalNumberOfBeanBagsAddedException {
         this(id, name, manufacturer, yearManufactured, monthManufactured, quantity);
         this.additionalText = additionalText;
     }
@@ -43,9 +43,8 @@ public class BeanBagsStock extends BeanBags {
      * @throws IllegalNumberOfBeanBagsAddedException
      */
     public BeanBagsStock(String id, String name, String manufacturer, short yearManufactured,
-                    byte monthManufactured, int quantity) throws
-                    IllegalIDException, InvalidMonthException, IllegalNumberOfBeanBagsAddedException
-    {
+            byte monthManufactured, int quantity) throws IllegalIDException,
+            InvalidMonthException, IllegalNumberOfBeanBagsAddedException {
         // initialises id name,  manufacturer, quantity
         super(id, name, manufacturer, quantity);
         //check id is valid, if not throw IllegalIDException
@@ -94,7 +93,6 @@ public class BeanBagsStock extends BeanBags {
      * Decrease quantity of bean bag in stock.
      * @param num Number to decrease quantity by
      * @return Returns true if there are none left, otherwise returns false
-     * @throws InsufficientStockException not enough stock
      */
     public boolean decreaseQuantity(int num){
         quantity -= num;
@@ -105,6 +103,11 @@ public class BeanBagsStock extends BeanBags {
         }
     }
 
+    /**
+     *
+     * @return
+     * @throws PriceNotSetException
+     */
     public int getPrice() throws PriceNotSetException {
         if (price == 0) {
             throw new PriceNotSetException("Price has not been set");
@@ -112,6 +115,11 @@ public class BeanBagsStock extends BeanBags {
         return price;
     }
 
+    /**
+     *
+     * @param price
+     * @throws InvalidPriceException
+     */
     public void setPrice(int price) throws InvalidPriceException {
         if (price < 1) {
             throw new InvalidPriceException("Price must be greater than 0 pence");
@@ -127,6 +135,10 @@ public class BeanBagsStock extends BeanBags {
         quantityUnreserved -= num;
     }
 
+    /**
+     *
+     * @param num
+     */
     public void unreserve(int num) {
         quantityUnreserved += num;
     }
@@ -138,6 +150,7 @@ public class BeanBagsStock extends BeanBags {
     public int getQuantityReserved() {
         return quantity - quantityUnreserved;
     }
+
     /**
      * Gets bean bag's details.
      * @return List of name, manufacturer and free text component
@@ -176,7 +189,6 @@ public class BeanBagsStock extends BeanBags {
                 duplicate = true;
                 //do not need to check any more of the dates; it is a duplicate
                 break;
-
             }
         }
         if (!duplicate) {
@@ -185,13 +197,16 @@ public class BeanBagsStock extends BeanBags {
         }
     }
 
+    /**
+     *
+     * @param name
+     * @param manufacturer
+     * @param information
+     * @return
+     */
     public boolean checkDetailsMatch(String name, String manufacturer, String information) {
-        if (this.name.equals(name) && this.manufacturer.equals(manufacturer)
-                && this.additionalText.equals(information)) {
-            return true;
-        } else {
-            return false;
-        }
+        return this.name.equals(name) && this.manufacturer.equals(manufacturer)
+                && this.additionalText.equals(information);
     }
 
 

@@ -40,6 +40,11 @@ public class BeanBags implements Serializable {
         this.id = id;
     }
 
+    /**
+     *
+     * @param id
+     * @throws IllegalIDException
+     */
     static void checkId(String id) throws IllegalIDException{
         //  checks if the string is positive,
         int hexadecimalNumber;

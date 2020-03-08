@@ -23,15 +23,31 @@ public class BeanBagReservation implements Serializable {
         reservationNumber = idCounter++;
     }
 
+    /**
+     *
+     * @return
+     */
     public int getLowestPrice() { return lowestPrice; }
 
+    /**
+     *
+     * @param price
+     */
     public void setLowestPrice(int price) {
         this.lowestPrice = price;
 
     }
 
+    /**
+     *
+     * @return
+     */
     public int getQuantity() {return numberOfBeanbags; }
 
+    /**
+     *
+     * @return
+     */
     public int getReservationNumber() { return reservationNumber; }
 
     /**
@@ -40,9 +56,17 @@ public class BeanBagReservation implements Serializable {
      */
     public String getId(){ return beanBagID; }
 
+    /**
+     *
+     * @param id
+     */
     public void setId(String id){
         beanBagID = id;
     }
 
+    /**
+     *
+     * @return
+     */
     public int getNumberOfBeanbags() { return numberOfBeanbags; }
 }
