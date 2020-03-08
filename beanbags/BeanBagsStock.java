@@ -21,9 +21,9 @@ public class BeanBagsStock extends BeanBags {
      * @param monthManufactured month of manufacture
      * @param quantity          number of bean bags
      * @param additionalText    description or additional details about the bean bag
-     * @throws IllegalIDException
-     * @throws InvalidMonthException
-     * @throws IllegalNumberOfBeanBagsAddedException
+     * @throws IllegalIDException                    ID is invalid
+     * @throws InvalidMonthException                 Month is invalid (not a number between 1 and 12)
+     * @throws IllegalNumberOfBeanBagsAddedException Number of bean bags is less than 1
      */
     public BeanBagsStock(String id, String name, String manufacturer, short yearManufactured,
             byte monthManufactured, int quantity, String additionalText) throws IllegalIDException,
@@ -40,9 +40,9 @@ public class BeanBagsStock extends BeanBags {
      * @param yearManufactured  year of manufacture
      * @param monthManufactured month of manufacture
      * @param quantity          number of bean bags
-     * @throws IllegalIDException
-     * @throws InvalidMonthException
-     * @throws IllegalNumberOfBeanBagsAddedException
+     * @throws IllegalIDException                    ID is invalid
+     * @throws InvalidMonthException                 Month is invalid (not a number between 1 and 12)
+     * @throws IllegalNumberOfBeanBagsAddedException Number of bean bags is less than 1
      */
     public BeanBagsStock(String id, String name, String manufacturer, short yearManufactured,
             byte monthManufactured, int quantity) throws IllegalIDException,
@@ -156,21 +156,12 @@ public class BeanBagsStock extends BeanBags {
      */
     public ObjectArrayList getDetails() {
         ObjectArrayList details = new ObjectArrayList();
-        details.add((Object) name);
-        details.add((Object) manufacturer);
-        details.add((Object) additionalText);
+        details.add(name);
+        details.add(manufacturer);
+        details.add(additionalText);
 
         return details;
     }
-
-    /**
-     * Setter method for free text component
-     * @param text text to set free text component equal too
-     */
-    public void setAdditionalText(String text) {
-        additionalText = text;
-    }
-
 
     /**
      * Add a date to list of dates
