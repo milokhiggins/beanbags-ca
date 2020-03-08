@@ -2,10 +2,9 @@ package beanbags;
 
 
 /**
- * BeanBags ...
+ * BeanBagsStock class contains multiple bean bags of the same type.
  *
  * @author SN690024245, SN680046138
- * @version 1.0
  */
 public class BeanBagsStock extends BeanBags {
     private ObjectArrayList manufactureDates = new ObjectArrayList();
@@ -14,7 +13,7 @@ public class BeanBagsStock extends BeanBags {
     private int price;
 
     /**
-     *
+     * Constructor method
      * @param id                8 digit hexadecimal ID of bean bag
      * @param name              bean bag name
      * @param manufacturer      bean bag manufacturer
@@ -22,6 +21,9 @@ public class BeanBagsStock extends BeanBags {
      * @param monthManufactured month of manufacture
      * @param quantity          number of bean bags
      * @param additionalText    description or additional details about the bean bag
+     * @throws IllegalIDException
+     * @throws InvalidMonthException
+     * @throws IllegalNumberOfBeanBagsAddedException
      */
     public BeanBagsStock(String id, String name, String manufacturer, short yearManufactured,
             byte monthManufactured, int quantity, String additionalText) throws IllegalIDException,
@@ -31,13 +33,13 @@ public class BeanBagsStock extends BeanBags {
     }
 
     /**
-     *
-     * @param id
-     * @param name
-     * @param manufacturer
-     * @param yearManufactured
-     * @param monthManufactured
-     * @param quantity
+     * Constructor method
+     * @param id                8 digit hexadecimal ID of bean bag
+     * @param name              bean bag name
+     * @param manufacturer      bean bag manufacturer
+     * @param yearManufactured  year of manufacture
+     * @param monthManufactured month of manufacture
+     * @param quantity          number of bean bags
      * @throws IllegalIDException
      * @throws InvalidMonthException
      * @throws IllegalNumberOfBeanBagsAddedException
@@ -96,17 +98,14 @@ public class BeanBagsStock extends BeanBags {
      */
     public boolean decreaseQuantity(int num){
         quantity -= num;
-        if (quantity == 0) {
-            return true;
-        } else {
-            return false;
-        }
+        quantityUnreserved -= num;
+        return quantity == 0;
     }
 
     /**
-     *
-     * @return
-     * @throws PriceNotSetException
+     * Access method for price
+     * @return price of bean bag
+     * @throws PriceNotSetException cannot get price; it has not been set
      */
     public int getPrice() throws PriceNotSetException {
         if (price == 0) {
@@ -116,9 +115,9 @@ public class BeanBagsStock extends BeanBags {
     }
 
     /**
-     *
-     * @param price
-     * @throws InvalidPriceException
+     * Setter method for price
+     * @param price price of bean bag
+     * @throws InvalidPriceException cannot set price to be less than 1 pence
      */
     public void setPrice(int price) throws InvalidPriceException {
         if (price < 1) {
@@ -136,8 +135,8 @@ public class BeanBagsStock extends BeanBags {
     }
 
     /**
-     *
-     * @param num
+     * Unreserve bean bags
+     * @param num number to unreserve
      */
     public void unreserve(int num) {
         quantityUnreserved += num;
@@ -174,7 +173,7 @@ public class BeanBagsStock extends BeanBags {
 
 
     /**
-     * Add a date to list of dates, only if it is not already in the list.
+     * Add a date to list of dates
      * @param month month of manufacture
      * @param year  year of manufacture
      */
@@ -198,17 +197,14 @@ public class BeanBagsStock extends BeanBags {
     }
 
     /**
-     *
-     * @param name
-     * @param manufacturer
-     * @param information
-     * @return
+     * Check the details match
+     * @param name          name of bean bag
+     * @param manufacturer  name of manufacturer
+     * @param information   additional text
+     * @return <code>true</code> if the details match, <code>false</code> otherwise
      */
     public boolean checkDetailsMatch(String name, String manufacturer, String information) {
         return this.name.equals(name) && this.manufacturer.equals(manufacturer)
                 && this.additionalText.equals(information);
     }
-
-
-
 }

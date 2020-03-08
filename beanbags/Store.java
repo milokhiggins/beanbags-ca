@@ -74,7 +74,7 @@ public class Store implements BeanBagStore, java.io.Serializable
             BeanBagsStock newBeanBagsStock = new BeanBagsStock(id, name, manufacturer, year,
                                               month, num, information);
             //add  to list of beanbags
-            this.beanbags.add((Object)newBeanBagsStock);
+            this.beanbags.add(newBeanBagsStock);
             beanBagTotal += num;
         } else {
             //if bean bag does exist
@@ -219,12 +219,13 @@ public class Store implements BeanBagStore, java.io.Serializable
         BeanBagReservation matchingReservation = (BeanBagReservation) reservations.get(matchingReservationIndex);
         //getting fields id, num and price form reservation.
         String id = matchingReservation.getId();
-        int num = matchingReservation.getNumberOfBeanbags();
+        int num = matchingReservation.getQuantity();
         int price = matchingReservation.getLowestPrice();
 
         //remove quantity from the relevant bean bag stock quantity.
         int beanBagsIndex = this.getBeanBagsIndexById(id);
         BeanBagsStock beanBagStock = (BeanBagsStock)beanbags.get(beanBagsIndex);
+        beanBagStock.unreserve(num);
         boolean empty = beanBagStock.decreaseQuantity(num);
         if (empty) {
             //this bean bag is now completely sold out; so remove from list

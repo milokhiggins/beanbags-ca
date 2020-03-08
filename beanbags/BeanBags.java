@@ -2,6 +2,11 @@ package beanbags;
 
 import java.io.Serializable;
 
+/**
+ * BeanBag class stores basic information about a bean bag.
+ *
+ * @author SN690024245 & SN680046138
+ */
 public class BeanBags implements Serializable {
     protected String id;
     protected String name;
@@ -9,7 +14,7 @@ public class BeanBags implements Serializable {
     protected int quantity;
 
     /**
-     *
+     * Constructor method
      * @param id           id of bean bag
      * @param name         name of bean bag
      * @param manufacturer manufacturer of bean bag
@@ -41,12 +46,11 @@ public class BeanBags implements Serializable {
     }
 
     /**
-     *
-     * @param id
-     * @throws IllegalIDException
+     * Check ID is valid
+     * @param id id
+     * @throws IllegalIDException ID is not valid; not a positive 8 digit hexadecimal number
      */
     static void checkId(String id) throws IllegalIDException{
-        //  checks if the string is positive,
         int hexadecimalNumber;
         //  checks if the string is a hexadecimal number.
         try{

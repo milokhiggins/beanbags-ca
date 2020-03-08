@@ -120,7 +120,7 @@ public class ObjectArrayList implements Serializable
      * 
      * @param o object to be placed in the list
      * @param index index of element in list to be replaced
-     * @return true if sucessfully replaced, otherwise false if index is
+     * @return true if successfully replaced, otherwise false if index is
      *         out of the range of stored data
      */
     public boolean replace(Object o, int index) {
