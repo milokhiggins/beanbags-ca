@@ -1,9 +1,12 @@
 package testing.store;
 
+import beanbags.*;
 import testing.Unittest;
 
+import java.io.IOException;
+
 public class StoreTestRunner {
-    public void run() {
+    public void run() throws BeanBagMismatchException, BeanBagIDNotRecognisedException, PriceNotSetException, IllegalIDException, ReservationNumberNotRecognisedException, InsufficientStockException, IllegalNumberOfBeanBagsAddedException, IllegalNumberOfBeanBagsReservedException, IOException, BeanBagNotInStockException, IllegalNumberOfBeanBagsSoldException, ClassNotFoundException, InvalidMonthException, InvalidPriceException {
         Unittest testAddBeanBags = new TestAddBeanBags();
         testAddBeanBags.run();
         Unittest testBeanBagsInStock = new TestBeanBagsInStock();

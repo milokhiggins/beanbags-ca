@@ -21,12 +21,11 @@ public class BeanBagsStock extends BeanBags {
      * @param monthManufactured month of manufacture
      * @param quantity          number of bean bags
      * @param additionalText    description or additional details about the bean bag
-     * @throws IllegalIDException                    ID is invalid
      * @throws InvalidMonthException                 Month is invalid (not a number between 1 and 12)
      * @throws IllegalNumberOfBeanBagsAddedException Number of bean bags is less than 1
      */
     public BeanBagsStock(String id, String name, String manufacturer, short yearManufactured,
-            byte monthManufactured, int quantity, String additionalText) throws IllegalIDException,
+            byte monthManufactured, int quantity, String additionalText) throws
             InvalidMonthException, IllegalNumberOfBeanBagsAddedException {
         this(id, name, manufacturer, yearManufactured, monthManufactured, quantity);
         this.additionalText = additionalText;
@@ -40,7 +39,6 @@ public class BeanBagsStock extends BeanBags {
      * @param yearManufactured  year of manufacture
      * @param monthManufactured month of manufacture
      * @param quantity          number of bean bags
-     * @throws IllegalIDException                    ID is invalid
      * @throws InvalidMonthException                 Month is invalid (not a number between 1 and 12)
      * @throws IllegalNumberOfBeanBagsAddedException Number of bean bags is less than 1
      */
@@ -49,6 +47,7 @@ public class BeanBagsStock extends BeanBags {
             InvalidMonthException, IllegalNumberOfBeanBagsAddedException {
         // initialises id name,  manufacturer, quantity
         super(id, name, manufacturer, quantity);
+        this.additionalText = "";
         //checks that at least one bean bag is added if not throws IllegalNumberOfBeanBagsAddedException
         if (quantity<=0){
             throw new IllegalNumberOfBeanBagsAddedException("Must add at least one beanbag");

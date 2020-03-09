@@ -6,5 +6,6 @@ public class TestGetPrice implements Unittest {
     public TestGetPrice() {
     }
     public void run() {
+
     }
 }
