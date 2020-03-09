@@ -45,12 +45,10 @@ public class BeanBagsStock extends BeanBags {
      * @throws IllegalNumberOfBeanBagsAddedException Number of bean bags is less than 1
      */
     public BeanBagsStock(String id, String name, String manufacturer, short yearManufactured,
-            byte monthManufactured, int quantity) throws IllegalIDException,
+            byte monthManufactured, int quantity) throws
             InvalidMonthException, IllegalNumberOfBeanBagsAddedException {
         // initialises id name,  manufacturer, quantity
         super(id, name, manufacturer, quantity);
-        //check id is valid, if not throw IllegalIDException
-        BeanBagsStock.checkId(id);
         //checks that at least one bean bag is added if not throws IllegalNumberOfBeanBagsAddedException
         if (quantity<=0){
             throw new IllegalNumberOfBeanBagsAddedException("Must add at least one beanbag");

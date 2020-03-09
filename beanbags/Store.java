@@ -67,10 +67,12 @@ public class Store implements BeanBagStore, java.io.Serializable
     String id, short year, byte month, String information)
     throws IllegalNumberOfBeanBagsAddedException, BeanBagMismatchException,
     IllegalIDException, InvalidMonthException {
+        //checks Id is valid
+        BeanBags.checkId(id);
         //Checks whether bean bag is currently registered in the stock.
         int indexOfMatch = this.getBeanBagsIndexById(id);
         if (indexOfMatch == -1) {
-            //if bean bag does not exist, create new bean bag object
+            //if bean bag does not exist, create new bean bag object, thr
             BeanBagsStock newBeanBagsStock = new BeanBagsStock(id, name, manufacturer, year,
                                               month, num, information);
             //add  to list of beanbags
@@ -285,6 +287,7 @@ public class Store implements BeanBagStore, java.io.Serializable
     public int reserveBeanBags(int num, String id) throws BeanBagNotInStockException,
     InsufficientStockException, IllegalNumberOfBeanBagsReservedException,
     PriceNotSetException, BeanBagIDNotRecognisedException, IllegalIDException {
+       //Checks Bean bag ID is valid
         BeanBags.checkId(id);
         int indexOfMatch = this.getBeanBagsIndexById(id);
         if (indexOfMatch == -1) {
