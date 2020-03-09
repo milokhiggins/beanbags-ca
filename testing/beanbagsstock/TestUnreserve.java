@@ -12,6 +12,6 @@ public class TestUnreserve implements Unittest {
         beans.reserve(10);
         assert beans.getQuantityReserved() == 10;
         beans.unreserve(5);
-        assert beans.getQuantityReserved() == 0;
+        assert beans.getQuantityReserved() == 5;
     }
 }
