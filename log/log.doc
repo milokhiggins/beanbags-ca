@@ -32,3 +32,5 @@ did some testing. Implement a range of mehtods including the reserve and unreser
 Date: 07/03/2020, Time 18:25, duration 3hr, typer: Sarah, reviewer:Milo
 created beanbags by reservation ID Refactored beanbags sold list. Added Comments.
 
+Date: 08/03/2020, Time 12:00, duration 5h4, typer: Milo, reviewer: Sarah
+finished last simple methods, and serialise/deserialise methods. Began writing a unit test framework 
