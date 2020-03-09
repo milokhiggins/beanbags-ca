@@ -51,10 +51,10 @@ public class BeanBags implements Serializable {
      * @throws IllegalIDException ID is not valid; not a positive 8 digit hexadecimal number
      */
     static void checkId(String id) throws IllegalIDException{
-        int hexadecimalNumber;
+        long hexadecimalNumber;
         //  checks if the string is a hexadecimal number.
         try{
-            hexadecimalNumber = Integer.parseInt(id,16);
+            hexadecimalNumber = Long.parseLong(id,16);
         }
         catch(NumberFormatException e){
             throw new IllegalIDException("ID must be hexadecimal number");
