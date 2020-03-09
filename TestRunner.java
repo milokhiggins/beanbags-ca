@@ -8,8 +8,6 @@ import java.io.IOException;
 
 public class TestRunner {
     public static void main(String[] args) throws BeanBagMismatchException, BeanBagIDNotRecognisedException, PriceNotSetException, IllegalIDException, ReservationNumberNotRecognisedException, IllegalNumberOfBeanBagsAddedException, IllegalNumberOfBeanBagsReservedException, InvalidPriceException, InsufficientStockException, IllegalNumberOfBeanBagsSoldException, ClassNotFoundException, InvalidMonthException, IOException, BeanBagNotInStockException {
-        StoreTestRunner storeTestRunner = new StoreTestRunner();
-        storeTestRunner.run();
 
         BeanBagsTestRunner beanBagTestRunner = new BeanBagsTestRunner();
         beanBagTestRunner.run();
@@ -19,6 +17,9 @@ public class TestRunner {
 
         BeanBagReservationTestRunner beanBagReservationTestRunner = new BeanBagReservationTestRunner();
         beanBagReservationTestRunner.run();
+
+        StoreTestRunner storeTestRunner = new StoreTestRunner();
+        storeTestRunner.run();
 
         System.out.println("All tests complete!");
     }
