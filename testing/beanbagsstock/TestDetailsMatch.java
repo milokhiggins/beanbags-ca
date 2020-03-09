@@ -1,4 +1,10 @@
 package testing.beanbagsstock;
 
-public class TestDetailsMatch {
+import testing.Unittest;
+
+public class TestDetailsMatch implements Unittest {
+    public TestDetailsMatch() {
+    }
+    public void run() {
+    }
 }

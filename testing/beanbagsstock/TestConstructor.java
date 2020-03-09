@@ -1,4 +1,10 @@
 package testing.beanbagsstock;
 
-public class TestConstructor {
+import testing.Unittest;
+
+public class TestConstructor implements Unittest {
+    public TestConstructor() {
+    }
+    public void run() {
+    }
 }

@@ -1,4 +1,9 @@
 package testing.beanbags;
 
-public class TestConstructor {
+import testing.Unittest;
+
+public class TestConstructor implements Unittest {
+    public void run() {
+
+    }
 }

@@ -1,4 +1,10 @@
 package testing.beanbagsstock;
 
-public class TestDecreaseQuantity {
+import testing.Unittest;
+
+public class TestDecreaseQuantity implements Unittest {
+    public TestDecreaseQuantity() {
+    }
+    public void run() {
+    }
 }

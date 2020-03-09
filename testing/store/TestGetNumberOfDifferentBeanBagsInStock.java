@@ -1,3 +1,10 @@
 package testing.store;
 
-public class TestGetNumberOfDifferentBeanBagsInStock {}
+import testing.Unittest;
+
+public class TestGetNumberOfDifferentBeanBagsInStock implements Unittest {
+    public TestGetNumberOfDifferentBeanBagsInStock() {
+    }
+    public void run() {
+    }
+}

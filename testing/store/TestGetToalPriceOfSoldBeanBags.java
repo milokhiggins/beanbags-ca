@@ -1,3 +1,10 @@
 package testing.store;
 
-public class TestGetToalPriceOfSoldBeanBags {}
+import testing.Unittest;
+
+public class TestGetToalPriceOfSoldBeanBags implements Unittest {
+    public TestGetToalPriceOfSoldBeanBags() {
+    }
+    public void run() {
+    }
+}

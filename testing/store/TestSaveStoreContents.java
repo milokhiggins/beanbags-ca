@@ -1,3 +1,10 @@
 package testing.store;
 
-public class TestSaveStoreContents {}
+import testing.Unittest;
+
+public class TestSaveStoreContents implements Unittest {
+    public TestSaveStoreContents() {
+    }
+    public void run() {
+    }
+}

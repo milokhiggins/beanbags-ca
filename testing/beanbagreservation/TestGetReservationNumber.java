@@ -1,4 +1,10 @@
 package testing.beanbagreservation;
 
-public class TestGetReservationNumber {
+import testing.Unittest;
+
+public class TestGetReservationNumber implements Unittest {
+    public TestGetReservationNumber() {
+    }
+    public void run() {
+    }
 }

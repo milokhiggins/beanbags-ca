@@ -1,4 +1,10 @@
 package testing.beanbagreservation;
 
-public class TestGetLowestPrice {
+import testing.Unittest;
+
+public class TestGetLowestPrice implements Unittest {
+    public TestGetLowestPrice() {
+    }
+    public void run() {
+    }
 }

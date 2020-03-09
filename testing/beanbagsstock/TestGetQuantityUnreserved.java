@@ -1,4 +1,10 @@
 package testing.beanbagsstock;
 
-public class TestGetQuantityUnreserved {
+import testing.Unittest;
+
+public class TestGetQuantityUnreserved implements Unittest {
+    public TestGetQuantityUnreserved() {
+    }
+    public void run() {
+    }
 }

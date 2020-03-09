@@ -1,4 +1,10 @@
 package testing.beanbagsstock;
 
-public class TestReserve {
+import testing.Unittest;
+
+public class TestReserve implements Unittest {
+    public TestReserve() {
+    }
+    public void run() {
+    }
 }

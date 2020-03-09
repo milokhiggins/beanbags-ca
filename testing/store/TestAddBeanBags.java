@@ -1,3 +1,10 @@
 package testing.store;
 
-public class TestAddBeanBags {}
+import testing.Unittest;
+
+public class TestAddBeanBags implements Unittest {
+    public TestAddBeanBags() {
+    }
+    public void run() {
+    }
+}
