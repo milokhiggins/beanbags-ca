@@ -46,8 +46,6 @@ public class TestAddBeanBags implements Unittest {
                 (short)1994, (byte)1,"hello!");
 
         //try adding another beanbag
-
-
         try {
         store.addBeanBags(0, "manufacturer", "Milo's Beanbag", "12345678",
                 (short)2000, (byte)12);
