@@ -12,5 +12,10 @@ public class TestGetNumberOfSoldBeanBags implements Unittest {
         store.setBeanBagPrice("128AB346", 200);
         store.sellBeanBags(5, "128AB346");
         assert store.getNumberOfSoldBeanBags() == 5 : "number of sold bean bags faulty";
+        store.addBeanBags(5, "manufacturer", "Sarah'sBean", "128AB346",
+                (short) 1994, (byte) 1, "hello!");
+        store.setBeanBagPrice("128AB346", 200);
+        store.sellBeanBags(5, "128AB346");
+        assert store.getNumberOfSoldBeanBags() == 10 : "number of sold bean bags faulty";
     }
 }
