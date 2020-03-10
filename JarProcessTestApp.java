@@ -20,6 +20,8 @@ import java.io.IOException;
 public class JarProcessTestApp {
 
 	private static void printDetails(Store store) {
+		System.out.println("");
+		System.out.println("===============================");
 		System.out.println(store.getNumberOfDifferentBeanBagsInStock() + " different kinds of bean bags");
 		System.out.println("Total of " + store.beanBagsInStock() + " bean bags in stock.");
 		System.out.println("And " + store.reservedBeanBagsInStock() + " reserved bean bags.");
@@ -37,11 +39,14 @@ public class JarProcessTestApp {
 
 		printDetails(store);
 
-		int resNum = store.reserveBeanBags(2,"423555FF");
+		store.setBeanBagPrice("423555FF", 3000);
+		int resNum = store.reserveBeanBags(2, "423555FF");
 
 		System.out.println("Reservation number " + resNum);
 
-		store.sellBeanBags(3,"456123FF");
+		store.setBeanBagPrice("456123FF", 4500);
+
+		store.sellBeanBags(5,"456123FF");
 
 		printDetails(store);
 
