@@ -327,13 +327,14 @@ public class Store implements BeanBagStore, java.io.Serializable
         if (indexOfMatch == -1) {
             throw new ReservationNumberNotRecognisedException("Reservation number not recognised");
         } else {
-            BeanBagReservation reservation = (BeanBagReservation)reservations.get(reservationNumber);
+            BeanBagReservation reservation = (BeanBagReservation)reservations.get(indexOfMatch);
             String id = reservation.getId();
             int quantity = reservation.getQuantity();
             reservations.remove(indexOfMatch);
             int beanBagIndex = getBeanBagsIndexById(id);
             BeanBagsStock beanbag = (BeanBagsStock)beanbags.get(beanBagIndex);
             beanbag.unreserve(quantity);
+            beanBagReservedTotal -= quantity;
         }
     }
 
