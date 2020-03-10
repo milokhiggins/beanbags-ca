@@ -17,5 +17,13 @@ public class TestGetNumberOfSoldBeanBags implements Unittest {
         store.setBeanBagPrice("128AB346", 200);
         store.sellBeanBags(5, "128AB346");
         assert store.getNumberOfSoldBeanBags() == 10 : "number of sold bean bags faulty";
+
+        boolean thrown = false;
+        try {
+            store.getNumberOfSoldBeanBags("crazy bananas");
+        } catch(IllegalIDException e) {
+            thrown = true;
+        }
+        assert thrown : "IllegalIDException not thrown";
     }
 }
