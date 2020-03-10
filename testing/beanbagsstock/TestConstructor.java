@@ -30,6 +30,5 @@ public class TestConstructor implements Unittest {
             assert false : "(TCNH) quantity is not invalid";
         }
         assert thrown : "InvalidMonthException not thrown";
-
     }
 }

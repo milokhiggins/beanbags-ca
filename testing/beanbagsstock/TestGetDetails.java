@@ -10,8 +10,8 @@ public class TestGetDetails implements Unittest {
         BeanBagsStock beans = new BeanBagsStock("1234ABCD", "Beans", "Bean Maker",
                 (short)2019, (byte)5, 20, "Best bouncy beans bonza");
         ObjectArrayList dets = beans.getDetails();
-        assert dets.get(0).equals("1234ABCD");
-        assert dets.get(1).equals("Beans");
+        assert dets.get(0).equals("Beans");
+        assert dets.get(1).equals("Bean Maker");
         assert dets.get(2).equals("Best bouncy beans bonza");
     }
 }
