@@ -13,5 +13,20 @@ public class TestGetBeanBagDetails implements Unittest {
         store.addBeanBags(1,"fooz","bazzers","34543000",(short)1914,(byte)5,
                 "free text information money");
         assert store.getBeanBagDetails("34543000").equals("free text information money");
+
+        boolean thrown = false;
+        try {
+            store.getBeanBagDetails("44448888");
+        } catch(BeanBagIDNotRecognisedException e ) {
+            thrown = true;
+        }
+        assert thrown : "BeanBagIDNotRecognisedException not thrown";
+        thrown = false;
+        try {
+            store.getBeanBagDetails("very froggychair");
+        } catch(IllegalIDException e ) {
+            thrown = true;
+        }
+        assert thrown : "IllegalIDException not thrown";
     }
 }
