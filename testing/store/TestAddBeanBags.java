@@ -16,6 +16,7 @@ public class TestAddBeanBags implements Unittest {
             InvalidPriceException, PriceNotSetException, ReservationNumberNotRecognisedException, IOException, ClassNotFoundException {
         Store store = new Store();
         //checks the banbags list is empty
+
         assert store.beanbags.size() == 0: " This should never happen: Beanbags list does not start empty";
         //try adding a new bean bag beanbag
         store.addBeanBags(5 , "manufacturer", "Sarah'sBean", "128AB346",
@@ -51,6 +52,8 @@ public class TestAddBeanBags implements Unittest {
         } catch (IllegalNumberOfBeanBagsAddedException e) { System.out.println("correctly flags IllegalNumberOfBeanBagsAddedException adding 0 beanbags");
 
         }
+
+
 
     }
 }
