@@ -41,9 +41,40 @@ public class TestAddBeanBags implements Unittest {
         //checks that the additional text is correct.
         assert  "hello!".equals(store.getBeanBagDetails("128AB346"));
 
-        //try adding 10 beanbags with the same ID and different details.
-        store.addBeanBags(10 , "manufacturer", "Sarah'sBean", "128AB346",
-                (short)1994, (byte)1,"hello!");
+
+        boolean thrown = false;
+        try {
+            //try adding 10 beanbags with the same ID and different details.
+            store.addBeanBags(10, "manufacturer", "Sarah'sBean1", "128AB346",
+                    (short) 1994, (byte) 1, "hello!");
+        }catch (BeanBagMismatchException e){
+            thrown = true;
+        }
+        assert thrown : "did not catch mismatch exception";
+
+       thrown = false;
+        try {
+            //try adding 10 beanbags with the same ID and different details.
+            store.addBeanBags(10, "manufacturer1", "Sarah'sBean", "128AB346",
+                    (short) 1994, (byte) 1, "hello!");
+        }catch (BeanBagMismatchException e){
+            thrown = true;
+        }
+        assert thrown : "did not catch mismatch exception";
+
+        thrown = false;
+        try {
+            //try adding 10 beanbags with the same ID and different details.
+            store.addBeanBags(10, "manufacturer", "Sarah'sBean", "128AB346",
+                    (short) 1994, (byte) 1, "hello!1");
+        }catch (BeanBagMismatchException e){
+            thrown = true;
+        }
+        assert thrown : "did not catch mismatch exception";
+
+
+
+
 
         //try adding another beanbag
         try {
