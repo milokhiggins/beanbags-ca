@@ -15,7 +15,7 @@ import java.io.BufferedOutputStream;
  */
 public class Store implements BeanBagStore, java.io.Serializable
 {
-    private ObjectArrayList beanbags = new ObjectArrayList();
+    public ObjectArrayList beanbags = new ObjectArrayList();
     private ObjectArrayList reservations = new ObjectArrayList();
     private int beanBagTotal = 0;
     private int beanBagReservedTotal = 0;
