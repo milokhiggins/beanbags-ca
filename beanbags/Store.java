@@ -671,8 +671,8 @@ public class Store implements BeanBagStore, java.io.Serializable
      */
     private boolean checkBeanBagSold (String id) {
         for (int i = 0; i < soldBeanBags.size(); i++) {
-            BeanBags beanbag = (BeanBags)soldBeanBags.get(i);
-            if (beanbag.getId().equals(id)) {
+            Object[] beanbag = (Object[])soldBeanBags.get(i);
+            if (((String)beanbag[0]).equals(id)) {
                 return true;
             }
         }
@@ -684,7 +684,7 @@ public class Store implements BeanBagStore, java.io.Serializable
      * @param id id of bean bag
      * @return list of bean bag reservation objects
      */
-    private ObjectArrayList getReservationsByBeanBagId (String id) {
+     private ObjectArrayList getReservationsByBeanBagId (String id) {
         ObjectArrayList matchingReservations = new ObjectArrayList();
         // iterates through all reservations in reservations list.
         for (int i = 0; i < reservations.size(); i++) {
