@@ -21,7 +21,7 @@ public class BeanBagsStock extends BeanBags {
      * @param monthManufactured month of manufacture
      * @param quantity          number of bean bags
      * @param additionalText    description or additional details about the bean bag
-     * @throws InvalidMonthException               Month is invalid (not a number between 1 and 12)
+     * @throws InvalidMonthException Month is invalid (not a number between 1 and 12)
      */
     public BeanBagsStock(String id, String name, String manufacturer, short yearManufactured,
             byte monthManufactured, int quantity, String additionalText) throws
@@ -38,7 +38,7 @@ public class BeanBagsStock extends BeanBags {
      * @param yearManufactured  year of manufacture
      * @param monthManufactured month of manufacture
      * @param quantity          number of bean bags
-     * @throws InvalidMonthException               Month is invalid (not a number between 1 and 12)
+     * @throws InvalidMonthException Month is invalid (not a number between 1 and 12)
      */
     public BeanBagsStock(String id, String name, String manufacturer, short yearManufactured,
             byte monthManufactured, int quantity) throws
@@ -173,14 +173,13 @@ public class BeanBagsStock extends BeanBags {
             }
         }
         if (!duplicate) {
-            //adds new date to the list of dates
             short[] newDate = {month, year};
             manufactureDates.add(newDate);
         }
     }
 
     /**
-     * Check the name, manufacturer and additional text details match
+     * Check the details match
      * @param name          name of bean bag
      * @param manufacturer  name of manufacturer
      * @param information   additional text
