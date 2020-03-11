@@ -3,7 +3,7 @@
     <output-path>$PROJECT_DIR$/out/artifacts/beanbags_ca_jar</output-path>
     <root id="archive" name="beanbags-ca.jar">
       <element id="module-output" name="beanbags-ca" />
-      <element id="module-source" name="beanbags-ca" />
+      <element id="dir-copy" path="$PROJECT_DIR$/beanbags" />
     </root>
   </artifact>
 </component>
