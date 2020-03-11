@@ -136,7 +136,8 @@ public class Store implements BeanBagStore, java.io.Serializable
         try {
             assert beanBagsStock.getPrice() > 0 : "Price must be greater than 0";
         } catch(PriceNotSetException e) {
-            assert false : "this should not happen; price has been set so PriceNotSetException should not be thrown";
+            assert false : "this should not happen; price has been set so PriceNotSetException " +
+                    "should not be thrown";
         }
     }
 
@@ -151,7 +152,8 @@ public class Store implements BeanBagStore, java.io.Serializable
         ObjectArrayList matchingReservations = this.getReservationsByBeanBagId(id);
         //iterates through list containing reservation(s)
         for (int i = 0; i < matchingReservations.size(); i++) {
-            BeanBagReservation matchingReservation = (BeanBagReservation) matchingReservations.get(i);
+            BeanBagReservation matchingReservation =
+                    (BeanBagReservation) matchingReservations.get(i);
             //Call function that will check and update the price if it i lower.
             matchingReservation.setLowestPrice(priceInPence);
         }
@@ -226,10 +228,12 @@ public class Store implements BeanBagStore, java.io.Serializable
         int matchingReservationIndex = getReservationByReservationNumber(reservationNumber);
         //if no reservation exists with that ID throws ReservationNumberNotRecognisedException
         if (matchingReservationIndex == -1) {
-            throw new ReservationNumberNotRecognisedException("Reservation number is not recognised.");
+            throw new ReservationNumberNotRecognisedException
+                    ("Reservation number is not recognised.");
         }
         //Get bean bag reservation
-        BeanBagReservation matchingReservation = (BeanBagReservation) reservations.get(matchingReservationIndex);
+        BeanBagReservation matchingReservation =
+                (BeanBagReservation) reservations.get(matchingReservationIndex);
         //getting fields id, num and price form reservation.
         String id = matchingReservation.getId();
         int num = matchingReservation.getQuantity();
@@ -341,7 +345,9 @@ public class Store implements BeanBagStore, java.io.Serializable
                 reservations.add(reservation);
                 beanBagReservedTotal += num;
 
-                assert beanBagReservedTotal <= beanBagTotal : "Cannot reserve more bean bags than there are in stock";
+                assert beanBagReservedTotal <= beanBagTotal : "Cannot reserve more bean bags " +
+                        "than there are in stock";
+
 
                 return reservation.getReservationNumber();
             }
@@ -356,15 +362,22 @@ public class Store implements BeanBagStore, java.io.Serializable
      */
     public void unreserveBeanBags(int reservationNumber)
     throws ReservationNumberNotRecognisedException {
+        //checks for the reservation in reservation list.
         int indexOfMatch = getReservationByReservationNumber(reservationNumber);
+        //is index returned is -1 reservation does not exist.
         if (indexOfMatch == -1) {
             throw new ReservationNumberNotRecognisedException("Reservation number not recognised");
         } else {
+            //gets reservation
             BeanBagReservation reservation = (BeanBagReservation)reservations.get(indexOfMatch);
+            //gets reservation details
             String id = reservation.getId();
             int quantity = reservation.getQuantity();
+            //removes reservation from reservations list
             reservations.remove(indexOfMatch);
+            //gets matching beanbag from beanbags list
             int beanBagIndex = getBeanBagsIndexById(id);
+            //updates relevant bean bag and store and fields.
             BeanBagsStock beanbag = (BeanBagsStock)beanbags.get(beanBagIndex);
             beanbag.unreserve(quantity);
             beanBagReservedTotal -= quantity;
@@ -496,7 +509,8 @@ public class Store implements BeanBagStore, java.io.Serializable
             //check that ID exists in bean bag list
             int indexOfMatch = this.getBeanBagsIndexById(id);
             if (indexOfMatch == -1) {
-                throw new BeanBagIDNotRecognisedException("Bean bag ID " + id + " is not recognised");
+                throw new BeanBagIDNotRecognisedException("Bean bag ID " + id +
+                        " is not recognised");
             }
             //no record of sale in soldBeanBags means number sold and total price is zero
             return new Object[]{id, 0, 0};
@@ -704,13 +718,15 @@ public class Store implements BeanBagStore, java.io.Serializable
      * @return index of reservation, or -1 if no matching reservation found
      */
     private int getReservationByReservationNumber(int reservationNumber) {
+        //iterates through list of reservations
         for (int i = 0; i < reservations.size(); i++) {
             BeanBagReservation reservation = (BeanBagReservation)reservations.get(i);
+            //if reservation contains matching reference number returns reservation index.
             if (reservation.getReservationNumber() == reservationNumber) {
                 return i;
             }
         }
-        //reservation not found
+        //if reservation not found returns -1
         return -1;
     }
 
