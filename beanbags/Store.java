@@ -291,12 +291,17 @@ public class Store implements BeanBagStore, java.io.Serializable
         BeanBags.checkId(id);
         int indexOfMatch = this.getBeanBagsIndexById(id);
         if (indexOfMatch == -1) {
+            //bean bag is not in stock
             if (checkBeanBagSold(id)) {
+                //bean bag has been in stock before, but is currently not in stock
                 throw new BeanBagNotInStockException("Bean bag ID "+id+" is no longer in stock.");
             } else {
+                //no record of bean bag ID exists; id is not recognised
                 throw new BeanBagIDNotRecognisedException("Bean bag ID "+id+" is not recognised");
             }
         } else {
+            //beanbag ID is valid and bean bag is in stock
+            //get bean bag from beanbags list
             BeanBagsStock beanbag = (BeanBagsStock) beanbags.get(indexOfMatch);
             int numberUnreserved = beanbag.getQuantityUnreserved();
             if (num < 1) {
@@ -305,9 +310,11 @@ public class Store implements BeanBagStore, java.io.Serializable
             } else if (numberUnreserved < num) {
                 throw new InsufficientStockException("Not enough unreserved stock.");
             } else {
-                beanbag.reserve(num);
+                //call beanbag.getPrice first as this may throw a PriceNotSetException
+                //needs to be thrown before beanbag.reserve so that the state is unmodified
                 BeanBagReservation reservation = new BeanBagReservation(id, num,
                         beanbag.getPrice());
+                beanbag.reserve(num);
                 reservations.add(reservation);
                 beanBagReservedTotal += num;
                 return reservation.getReservationNumber();

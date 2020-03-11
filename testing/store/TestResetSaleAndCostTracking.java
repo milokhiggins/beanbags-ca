@@ -13,6 +13,5 @@ public class TestResetSaleAndCostTracking implements Unittest {
         assert store.getTotalPriceOfSoldBeanBags() == 25000;
         store.resetSaleAndCostTracking();
         assert store.getTotalPriceOfSoldBeanBags() == 0;
-        boolean thrown = false;
     }
 }
