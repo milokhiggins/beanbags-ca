@@ -305,9 +305,11 @@ public class Store implements BeanBagStore, java.io.Serializable
             } else if (numberUnreserved < num) {
                 throw new InsufficientStockException("Not enough unreserved stock.");
             } else {
-                beanbag.reserve(num);
+                //call beanbag.getPrice first as this may throw a PriceNotSetException
+                //needs to be thrown before beanbag.reserve so that the state is unmodified
                 BeanBagReservation reservation = new BeanBagReservation(id, num,
                         beanbag.getPrice());
+                beanbag.reserve(num);
                 reservations.add(reservation);
                 beanBagReservedTotal += num;
                 return reservation.getReservationNumber();

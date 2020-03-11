@@ -19,7 +19,7 @@ public class TestReserveBeanBags implements Unittest {
         int num1 = store.reserveBeanBags(5,"222BACC1");
         int num2 = store.reserveBeanBags(10,"222BACC1");
 
-        assert store.reservedBeanBagsInStock() == 5;
+        assert store.reservedBeanBagsInStock() == 15;
 
         store.setBeanBagPrice("222BACC1", 6000);
 
@@ -70,6 +70,7 @@ public class TestReserveBeanBags implements Unittest {
         }
         assert thrown : "InsufficientStockException not thrown";
         thrown = false;
+        store.setBeanBagPrice("222BACC2",1000);
         store.sellBeanBags(10,"222BACC2");
         try {
             store.reserveBeanBags(5,"222BACC2");
