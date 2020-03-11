@@ -67,17 +67,24 @@ public class Store implements BeanBagStore, java.io.Serializable
     String id, short year, byte month, String information)
     throws IllegalNumberOfBeanBagsAddedException, BeanBagMismatchException,
     IllegalIDException, InvalidMonthException {
-        //checks Id is valid
+        //checks Id is valid (throws IllegalIDException)
         BeanBags.checkId(id);
+        //Checks num is valid
+        if (num <= 0) {
+            throw new IllegalNumberOfBeanBagsAddedException("Cannot add less than 1 bean bag");
+        }
         //Checks whether bean bag is currently registered in the stock.
         int indexOfMatch = this.getBeanBagsIndexById(id);
         if (indexOfMatch == -1) {
-            //if bean bag does not exist, create new bean bag object, thr
+            //if bean bag does not exist, create new bean bag object
+            //may throw IllegalNumberOfBeanBagsAddedException and InvalidMonthException
             BeanBagsStock newBeanBagsStock = new BeanBagsStock(id, name, manufacturer, year,
                                               month, num, information);
             //add  to list of beanbags
             this.beanbags.add(newBeanBagsStock);
             beanBagTotal += num;
+
+            assert newBeanBagsStock.getQuantity() > 0 : "cannot add zero beanbags";
         } else {
             //if bean bag does exist
             BeanBagsStock existingBeanBagsStock = (BeanBagsStock)this.beanbags.get(indexOfMatch);
@@ -94,6 +101,8 @@ public class Store implements BeanBagStore, java.io.Serializable
                 throw new BeanBagMismatchException("The ID entered does not match the details of " +
                         "the bean bag");
             }
+
+            assert existingBeanBagsStock.getQuantity() > 0 : "cannot add zero beanbags";
         }
     }
 
@@ -122,6 +131,12 @@ public class Store implements BeanBagStore, java.io.Serializable
         // if bean bag has reservations update them if appropriate.
         if (beanBagsStock.getQuantityReserved() > 0) {
         updateReservationLowestPrice(id, priceInPence);
+        }
+
+        try {
+            assert beanBagsStock.getPrice() > 0 : "Price must be greater than 0";
+        } catch(PriceNotSetException e) {
+            assert false : "this should not happen; price has been set so PriceNotSetException should not be thrown";
         }
     }
 
@@ -195,6 +210,8 @@ public class Store implements BeanBagStore, java.io.Serializable
         //Creating a list and adding to bean bags sold list record
 
         updateSaleTracking(id, num, priceTotal);
+
+        assert getNumberOfSoldBeanBags() > 0 : "Must sell at least 1 bean bag";
     }
 
     /**
@@ -236,6 +253,8 @@ public class Store implements BeanBagStore, java.io.Serializable
 
         //remove from reservations
         reservations.remove(matchingReservationIndex);
+
+        assert getNumberOfSoldBeanBags() > 0 : "Must sell at least 1 bean bag";
     }
 
     /**
@@ -268,6 +287,10 @@ public class Store implements BeanBagStore, java.io.Serializable
         numberBeanBagsSold += num;
         beanBagTotal -= num;
         totalPriceSoldBeanBags += totalPrice;
+
+        assert numberBeanBagsSold > 0 : "cannot sell 0 bean bags";
+        assert beanBagTotal >= 0 : "cannot have less than 0 bean bags in stock";
+
     }
 
     /**
@@ -317,6 +340,9 @@ public class Store implements BeanBagStore, java.io.Serializable
                 beanbag.reserve(num);
                 reservations.add(reservation);
                 beanBagReservedTotal += num;
+
+                assert beanBagReservedTotal <= beanBagTotal : "Cannot reserve more bean bags than there are in stock";
+
                 return reservation.getReservationNumber();
             }
         }
@@ -342,6 +368,9 @@ public class Store implements BeanBagStore, java.io.Serializable
             BeanBagsStock beanbag = (BeanBagsStock)beanbags.get(beanBagIndex);
             beanbag.unreserve(quantity);
             beanBagReservedTotal -= quantity;
+
+            assert beanBagReservedTotal >= 0 : "Cannot have less than 0 bean bags reserved";
+            assert beanbag.getQuantityReserved() >= 0 : "Cannot have less than 0 beanbags reserved";
         }
     }
 
@@ -429,6 +458,11 @@ public class Store implements BeanBagStore, java.io.Serializable
                 beanBagReservedTotal = (int) newContents.get(4);
                 numberBeanBagsSold = (int) newContents.get(5);
                 totalPriceSoldBeanBags = (int) newContents.get(6);
+
+                assert beanBagTotal >= 0 : "cannot have negative number of bean bags";
+                assert beanBagReservedTotal >= 0 : "cannot have negative number of reservations";
+                assert numberBeanBagsSold >= 0 : "cannot have negative number of sold bean bags";
+                assert totalPriceSoldBeanBags >= 0: "cannot have negative total price";
             }
         }
     }
@@ -623,6 +657,9 @@ public class Store implements BeanBagStore, java.io.Serializable
                 }
             }
         }
+        assert !checkBeanBagSold(oldId) : "oldID should not exist on system";
+        assert getBeanBagsIndexById(oldId) == -1 : "oldID should not exist on system";
+        assert getReservationsByBeanBagId(oldId).size() == 0 : "oldID should not exist on system";
     }
 
     /**
@@ -631,12 +668,15 @@ public class Store implements BeanBagStore, java.io.Serializable
      * @return index of bean bag, or -1 if no matching bean bag.
      */
     private int getBeanBagsIndexById (String id) {
+        //search list of beanbags
         for (int i = 0; i < beanbags.size(); i++) {
             BeanBagsStock beanbag = (BeanBagsStock)beanbags.get(i);
             if (beanbag.getId().equals(id)) {
+                //return index
                 return i;
             }
         }
+        //bean bag not found; return -1
         return -1;
     }
 
@@ -646,8 +686,10 @@ public class Store implements BeanBagStore, java.io.Serializable
      * @return index of sale record or -1 if no match found
      */
     private int getSoldBeanBagIndexByID(String id){
+        //search list of sales
         for (int i = 0; i < soldBeanBags.size(); i++) {
             Object[] soldBeanBagRecord = (Object[]) soldBeanBags.get(i);
+            //sale = {id, numberSold, totalPrice}
             if (((String)soldBeanBagRecord[0]).equals(id)){
                 return i;
             }
@@ -678,12 +720,14 @@ public class Store implements BeanBagStore, java.io.Serializable
      * @return true if bean bag id has been sold before, false otherwise.
      */
     private boolean checkBeanBagSold (String id) {
+        //search for id in soldBeanBags list
         for (int i = 0; i < soldBeanBags.size(); i++) {
             Object[] beanbag = (Object[])soldBeanBags.get(i);
             if (((String)beanbag[0]).equals(id)) {
                 return true;
             }
         }
+        //not found; return false
         return false;
     }
 

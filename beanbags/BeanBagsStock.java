@@ -22,11 +22,10 @@ public class BeanBagsStock extends BeanBags {
      * @param quantity          number of bean bags
      * @param additionalText    description or additional details about the bean bag
      * @throws InvalidMonthException                 Month is invalid (not a number between 1 and 12)
-     * @throws IllegalNumberOfBeanBagsAddedException Number of bean bags is less than 1
      */
     public BeanBagsStock(String id, String name, String manufacturer, short yearManufactured,
             byte monthManufactured, int quantity, String additionalText) throws
-            InvalidMonthException, IllegalNumberOfBeanBagsAddedException {
+            InvalidMonthException {
         this(id, name, manufacturer, yearManufactured, monthManufactured, quantity);
         this.additionalText = additionalText;
     }
@@ -40,18 +39,13 @@ public class BeanBagsStock extends BeanBags {
      * @param monthManufactured month of manufacture
      * @param quantity          number of bean bags
      * @throws InvalidMonthException                 Month is invalid (not a number between 1 and 12)
-     * @throws IllegalNumberOfBeanBagsAddedException Number of bean bags is less than 1
      */
     public BeanBagsStock(String id, String name, String manufacturer, short yearManufactured,
             byte monthManufactured, int quantity) throws
-            InvalidMonthException, IllegalNumberOfBeanBagsAddedException {
+            InvalidMonthException {
         // initialises id name,  manufacturer, quantity
         super(id, name, manufacturer, quantity);
         this.additionalText = "";
-        //checks that at least one bean bag is added if not throws IllegalNumberOfBeanBagsAddedException
-        if (quantity<=0){
-            throw new IllegalNumberOfBeanBagsAddedException("Must add at least one beanbag");
-        }
         //checks that the month manufactured is valid. If not throws InvalidMonthException
         if (monthManufactured < 1 || monthManufactured > 12){
             throw new InvalidMonthException("Month has to be a number between 1 and 12");
