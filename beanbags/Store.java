@@ -291,12 +291,17 @@ public class Store implements BeanBagStore, java.io.Serializable
         BeanBags.checkId(id);
         int indexOfMatch = this.getBeanBagsIndexById(id);
         if (indexOfMatch == -1) {
+            //bean bag is not in stock
             if (checkBeanBagSold(id)) {
+                //bean bag has been in stock before, but is currently not in stock
                 throw new BeanBagNotInStockException("Bean bag ID "+id+" is no longer in stock.");
             } else {
+                //no record of bean bag ID exists; id is not recognised
                 throw new BeanBagIDNotRecognisedException("Bean bag ID "+id+" is not recognised");
             }
         } else {
+            //beanbag ID is valid and bean bag is in stock
+            //get bean bag from beanbags list
             BeanBagsStock beanbag = (BeanBagsStock) beanbags.get(indexOfMatch);
             int numberUnreserved = beanbag.getQuantityUnreserved();
             if (num < 1) {
