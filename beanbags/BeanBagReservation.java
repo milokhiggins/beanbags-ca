@@ -38,6 +38,7 @@ public class BeanBagReservation implements Serializable {
      * @param price new lowest price
      */
     public void setLowestPrice(int price) {
+        //if the new price is lower than the stored price it is changed.
         if (price < lowestPrice) {
             this.lowestPrice = price;
         }

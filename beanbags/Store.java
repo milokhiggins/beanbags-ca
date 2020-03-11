@@ -1,4 +1,5 @@
 package beanbags;
+
 import java.io.IOException;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -387,39 +388,6 @@ public class Store implements BeanBagStore, java.io.Serializable
         }
     }
 
-    /**
-     * Access method for total number of bean bags in stock (including reservations).
-     * @return Total number of bean bags in stock
-     */
-    public int beanBagsInStock() { return beanBagTotal; }
-
-    /**
-     * Access method for total number of reserved bean bags.
-     * @return Total number of reserved bean bags
-     */
-    public int reservedBeanBagsInStock() { return beanBagReservedTotal; }
-
-    /**
-     * Get number of bean bags in stock of a particular ID
-     * @param id            ID of bean bags
-     * @return number of matching bean bags in stock
-     * @throws BeanBagIDNotRecognisedException  No bean bags of this ID exist in stock
-     * @throws IllegalIDException               ID is invalid
-     */
-    public int beanBagsInStock(String id) throws BeanBagIDNotRecognisedException,
-    IllegalIDException {
-        //check ID is valid; throws IllegalIDException if not
-        BeanBags.checkId(id);
-        int beanbagIndex = getBeanBagsIndexById(id);
-        if (beanbagIndex == -1) {
-            //no bean bags match this ID
-            throw new BeanBagIDNotRecognisedException("Beanbag ID not recognised");
-        }
-        //get bean bag stock object from list of beanbags
-        BeanBagsStock beanbag = (BeanBagsStock)beanbags.get(beanbagIndex);
-        //return number in stock
-        return beanbag.getQuantity();
-    }
 
     /**
      * Writes contents of store to file.
@@ -481,6 +449,40 @@ public class Store implements BeanBagStore, java.io.Serializable
     }
 
     /**
+     * Access method for total number of bean bags in stock (including reservations).
+     * @return Total number of bean bags in stock
+     */
+    public int beanBagsInStock() { return beanBagTotal; }
+
+    /**
+     * Get number of bean bags in stock of a particular ID
+     * @param id            ID of bean bags
+     * @return number of matching bean bags in stock
+     * @throws BeanBagIDNotRecognisedException  No bean bags of this ID exist in stock
+     * @throws IllegalIDException               ID is invalid
+     */
+    public int beanBagsInStock(String id) throws BeanBagIDNotRecognisedException,
+            IllegalIDException {
+        //check ID is valid; throws IllegalIDException if not
+        BeanBags.checkId(id);
+        int beanbagIndex = getBeanBagsIndexById(id);
+        if (beanbagIndex == -1) {
+            //no bean bags match this ID
+            throw new BeanBagIDNotRecognisedException("Beanbag ID not recognised");
+        }
+        //get bean bag stock object from list of beanbags
+        BeanBagsStock beanbag = (BeanBagsStock)beanbags.get(beanbagIndex);
+        //return number in stock
+        return beanbag.getQuantity();
+    }
+
+    /**
+     * Access method for total number of reserved bean bags.
+     * @return Total number of reserved bean bags
+     */
+    public int reservedBeanBagsInStock() { return beanBagReservedTotal; }
+
+    /**
      * Access method for total number of different types of bean bags in stock.
      * @return number of different bean bags in stock
      */
@@ -491,6 +493,19 @@ public class Store implements BeanBagStore, java.io.Serializable
      * @return number of sold bean bags
      */
     public int getNumberOfSoldBeanBags() { return numberBeanBagsSold; }
+
+    /**
+     * Get the number of sold bean bags of a particular ID
+     * @param id ID of bean bags
+     * @return number of sold bean bags
+     * @throws BeanBagIDNotRecognisedException No bean bag matches the given ID
+     * @throws IllegalIDException              ID is invalid
+     */
+    public int getNumberOfSoldBeanBags(String id) throws
+            BeanBagIDNotRecognisedException, IllegalIDException {
+        Object[] record = getSoldBeanBagRecord(id);
+        return (int)record[1];
+    }
 
     /**
      * Get a sale by it's ID
@@ -528,18 +543,6 @@ public class Store implements BeanBagStore, java.io.Serializable
         return null;
     }
 
-    /**
-     * Get the number of sold bean bags of a particular ID
-     * @param id ID of bean bags
-     * @return number of sold bean bags
-     * @throws BeanBagIDNotRecognisedException No bean bag matches the given ID
-     * @throws IllegalIDException              ID is invalid
-     */
-    public int getNumberOfSoldBeanBags(String id) throws
-    BeanBagIDNotRecognisedException, IllegalIDException {
-        Object[] record = getSoldBeanBagRecord(id);
-        return (int)record[1];
-    }
 
     /**
      * Access method for the total price of sold bean bagg
