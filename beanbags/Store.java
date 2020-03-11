@@ -182,7 +182,7 @@ public class Store implements BeanBagStore, java.io.Serializable
         if (indexOfMatch == -1) {
             //if the beanbag has been sold before throws BeanBagNotInStockException
             if (checkBeanBagSold(id)) {
-                throw new BeanBagNotInStockException("Bean bag ID " + id + " is no longer in stock.");
+                throw new BeanBagNotInStockException("Bean bag ID "+id+" is no longer in stock.");
             }
             //Else throw BeanBagIDNotRecognisedException
             throw new BeanBagIDNotRecognisedException("Bean bag ID " + id + " is not recognised");
@@ -196,7 +196,8 @@ public class Store implements BeanBagStore, java.io.Serializable
         // IllegalNumberOfBeanBagsSoldException.
         if (num < 1) {
             throw new IllegalNumberOfBeanBagsSoldException("Cannot sell less than 1 bean bag");
-        //checks there are enough unreserved beanbags in stock if not throws InsufficientStockException
+        //checks there are enough unreserved beanbags in stock if not throws
+        //InsufficientStockException
         } else if (numberUnreserved < num) {
             throw new InsufficientStockException("Not enough unreserved stock.");
         }
