@@ -6,7 +6,7 @@ import testing.Unittest;
 public class TestGetTotalPriceOfReservedBeanBags implements Unittest {
     public TestGetTotalPriceOfReservedBeanBags() throws IllegalIDException, BeanBagMismatchException, InvalidMonthException, IllegalNumberOfBeanBagsAddedException, InvalidPriceException, BeanBagIDNotRecognisedException, BeanBagNotInStockException, InsufficientStockException, IllegalNumberOfBeanBagsReservedException, PriceNotSetException {
     }
-    public void run() throws IllegalIDException, BeanBagMismatchException, InvalidMonthException, IllegalNumberOfBeanBagsAddedException, InvalidPriceException, BeanBagIDNotRecognisedException, BeanBagNotInStockException, InsufficientStockException, IllegalNumberOfBeanBagsReservedException, PriceNotSetException {
+    public void run() throws IllegalIDException, BeanBagMismatchException, InvalidMonthException, IllegalNumberOfBeanBagsAddedException, InvalidPriceException, BeanBagIDNotRecognisedException, BeanBagNotInStockException, InsufficientStockException, IllegalNumberOfBeanBagsReservedException, PriceNotSetException, ReservationNumberNotRecognisedException {
 
         Store store = new Store();
 
@@ -21,7 +21,10 @@ public class TestGetTotalPriceOfReservedBeanBags implements Unittest {
         store.addBeanBags(5, "manufacturer1", "Sarah'sBean", "528AB346",
                 (short) 1994, (byte) 1, "hello!");
         store.setBeanBagPrice("528AB346", 100);
-        store.reserveBeanBags(5, "528AB346" );
+        int x = store.reserveBeanBags(5, "528AB346" );
         assert store.getTotalPriceOfReservedBeanBags() == 1500 : "Total price of reserved beans not functioning";
+        store.unreserveBeanBags(x);
+        assert store.getTotalPriceOfReservedBeanBags() == 1000 : "Total price of reserved beans not functioning when undeserving beanbags";
+
     }
 }
